@@ -16,11 +16,18 @@ const login= async (email:string,password:string,dispatch:Dispatch<any>) => {
             withCredentials:true
         })
         console.log(`response :${resp}`)
-
         const cookie=resp.data?.token
+        const is_online=resp.data?.profile?.[0]?.is_online
+        const bio=resp.data?.profile?.[0]?.bio
+        const last_seen=resp.data?.profile?.[0]?.last_seen
+        const profile_pic=resp.data?.profile?.[0]?.profile_pic
+        const roles=resp.data?.profile?.[0]?.roles
+        const name=resp.data?.name
+
+
         console.log("Auth js full data=>",resp.data)
         console.log("Dispatching login with payload:", {cookie});
-        dispatch(reducerLogin({cookie}))
+        dispatch(reducerLogin({cookie,bio,is_online,last_seen,profile_pic,roles,name}))
         return resp.status
     }
     catch(e:any){

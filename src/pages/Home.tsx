@@ -1,108 +1,72 @@
-// import React from 'react'
-
-// function Home() {
-
-//   return (
-//     <div className='justify-center items-center'>
-//       <h1>Hi welcome</h1>
-//     </div> 
-     
-//   )
-// }
-
-// export default Home
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MessageSquare, Plus, Search, Users, TrendingUp, Hash, Clock, User, LogIn, UserPlus } from 'lucide-react';
+import {roomlist} from "../backend/room.ts"
+import { Link } from 'react-router-dom';
+import { logout } from '@/store/authSlice.ts';
+import { getTopics } from '@/backend/topic.ts';
 
 export default function ChatroomHome() {
+  type RoomType = {
+    id: string;   
+    author: string;        
+    name: string;
+    description: string;
+    topic: string;
+    is_private: boolean;
+    created_at:Date
+    updated_at:Date
+  }
+  type TopicType={
+    id:number,
+    topic:string
+  }
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('all');
+  const[rooms,setRooms]=useState<RoomType[]>([])
+  const [topics,setTopics]=useState<TopicType[]>([])
 
-  const topics = [
-    { id: 'all', name: 'All Topics', count: 24 },
-    { id: 'tech', name: 'Technology', count: 8 },
-    { id: 'gaming', name: 'Gaming', count: 6 },
-    { id: 'music', name: 'Music', count: 4 },
-    { id: 'sports', name: 'Sports', count: 3 },
-    { id: 'general', name: 'General', count: 3 }
-  ];
+  // const topics = [
+  //   { id: 'all', name: 'All Topics', count: 24 },
+  //   { id: 'tech', name: 'Technology', count: 8 },
+  //   { id: 'gaming', name: 'Gaming', count: 6 },
+  //   { id: 'music', name: 'Music', count: 4 },
+  //   { id: 'sports', name: 'Sports', count: 3 },
+  //   { id: 'general', name: 'General', count: 3 }
+  // ];
 
-  const rooms = [
-    {
-      id: 1,
-      name: 'Python Developers Hub',
-      description: 'Discuss Python, Django, FastAPI and web development',
-      topic: 'Technology',
-      host: 'sarah_dev',
-      members: 47,
-      messages: 1240,
-      active: true,
-      lastActivity: '2m ago'
-    },
-    {
-      id: 2,
-      name: 'Indie Game Dev',
-      description: 'Share your game dev journey and get feedback',
-      topic: 'Gaming',
-      host: 'pixel_master',
-      members: 32,
-      messages: 856,
-      active: true,
-      lastActivity: '5m ago'
-    },
-    {
-      id: 3,
-      name: 'Late Night Lounge',
-      description: 'Casual chats about anything and everything',
-      topic: 'General',
-      host: 'night_owl',
-      members: 89,
-      messages: 3421,
-      active: true,
-      lastActivity: '1m ago'
-    },
-    {
-      id: 4,
-      name: 'React & Frontend',
-      description: 'Modern frontend development with React, Vue, and more',
-      topic: 'Technology',
-      host: 'jsx_ninja',
-      members: 56,
-      messages: 2103,
-      active: false,
-      lastActivity: '1h ago'
-    },
-    {
-      id: 5,
-      name: 'Music Production',
-      description: 'Beats, mixing, and production techniques',
-      topic: 'Music',
-      host: 'beat_maker',
-      members: 28,
-      messages: 671,
-      active: true,
-      lastActivity: '8m ago'
-    },
-    {
-      id: 6,
-      name: 'Football Fanatics',
-      description: 'All things football - tactics, transfers, match analysis',
-      topic: 'Sports',
-      host: 'goal_keeper',
-      members: 64,
-      messages: 1893,
-      active: false,
-      lastActivity: '23m ago'
+  
+  
+  const getrooms = async () => {
+    try {
+      const resp:{rooms:RoomType[]} = await roomlist();
+      setRooms(resp?.rooms); 
+    } catch (e) {
+      console.log(e);
     }
-  ];
-
-  const filteredRooms = rooms.filter(room => {
-    const matchesSearch = room.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         room.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesTopic = selectedTopic === 'all' || room.topic.toLowerCase() === selectedTopic;
-    return matchesSearch && matchesTopic;
-  });
+  };
+  
+  const get_topics = async () => {
+    try {
+      const resp= await getTopics()
+      setTopics(resp); 
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  
+  useEffect(()=>{
+    getrooms()
+    get_topics()
+    console.log(`Rooms=>${rooms}`)
+  },[])
+  
+  
+  // const filteredRooms = rooms.filter(room => {
+  //   const matchesSearch = room.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //                        room.description.toLowerCase().includes(searchQuery.toLowerCase());
+  //   const matchesTopic = selectedTopic === 'all' || room.topic.toLowerCase() === selectedTopic;
+  //   return matchesSearch && matchesTopic;
+  // });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -182,19 +146,21 @@ export default function ChatroomHome() {
                 {topics.map((topic) => (
                   <button
                     key={topic.id}
-                    onClick={() => setSelectedTopic(topic.id)}
+                    onClick={() => setSelectedTopic(topic.topic)}
+
+                    
                     className={`w-full text-left px-4 py-3 rounded-lg transition ${
-                      selectedTopic === topic.id
+                      selectedTopic === topic.topic
                         ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
                         : 'hover:bg-gray-50 text-gray-700'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-medium">{topic.name}</span>
+                      <span className="font-medium">{topic.topic}</span>
                       <span className={`text-sm ${
-                        selectedTopic === topic.id ? 'text-indigo-100' : 'text-gray-500'
+                        selectedTopic === topic.topic ? 'text-indigo-100' : 'text-gray-500'
                       }`}>
-                        {topic.count}
+                        12
                       </span>
                     </div>
                   </button>
@@ -212,13 +178,13 @@ export default function ChatroomHome() {
           <div className="lg:col-span-3">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-gray-900">
-                {selectedTopic === 'all' ? 'All Rooms' : `${topics.find(t => t.id === selectedTopic)?.name} Rooms`}
+                {/* {selectedTopic === 'all' ? 'All Rooms' : `${topics.find(t => t.id === selectedTopic)?.name} Rooms`}*/}
               </h3>
-              <span className="text-gray-600">{filteredRooms.length} rooms</span>
+              {/* <span className="text-gray-600">{filteredRooms.length} rooms</span>  */}
             </div>
 
             <div className="space-y-4">
-              {filteredRooms.map((room) => (
+              {rooms.map((room) => (
                 <div
                   key={room.id}
                   className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:border-indigo-200 transition cursor-pointer group"
@@ -226,15 +192,22 @@ export default function ChatroomHome() {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
+                        <Link to={`/rooms/${room.id}/messages`}>
                         <h4 className="text-xl font-semibold text-gray-900 group-hover:text-indigo-600 transition">
                           {room.name}
                         </h4>
-                        {room.active && (
-                          <span className="flex items-center space-x-1 px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                            <span>Active</span>
-                          </span>
-                        )}
+                        </Link>
+                        {room.is_private ?(
+                            <span className="flex items-center space-x-1 px-2 py-1 bg-red-100 text-green-700 text-xs font-medium rounded-full">
+                              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                              <span>Private</span>
+                            </span>
+                          ):(
+                            <span className="flex items-center space-x-1 px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                              <span>Public</span>
+                            </span>
+                          )}
                       </div>
                       <p className="text-gray-600 mb-3">{room.description}</p>
                       
@@ -245,32 +218,19 @@ export default function ChatroomHome() {
                         </span>
                         <span className="flex items-center space-x-1">
                           <User className="w-4 h-4" />
-                          <span>{room.host}</span>
+                          <span>{room.author}</span>
                         </span>
                         <span className="flex items-center space-x-1">
                           <Clock className="w-4 h-4" />
-                          <span>{room.lastActivity}</span>
+                          <span>lastActivity</span>
                         </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center space-x-4 text-sm">
-                      <span className="flex items-center space-x-1 text-gray-600">
-                        <Users className="w-4 h-4" />
-                        <span className="font-medium">{room.members}</span>
-                        <span className="text-gray-500">members</span>
-                      </span>
-                      <span className="flex items-center space-x-1 text-gray-600">
-                        <MessageSquare className="w-4 h-4" />
-                        <span className="font-medium">{room.messages}</span>
-                        <span className="text-gray-500">messages</span>
-                      </span>
-                    </div>
-                    
                     <button className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-md transition opacity-0 group-hover:opacity-100">
-                      Join Room
+                    {room.is_private?"Join Room":"Request to Join"}
                     </button>
                   </div>
                 </div>

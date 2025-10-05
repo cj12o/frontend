@@ -6,25 +6,26 @@ import { Provider } from 'react-redux'
 import store from "./store/store.js"
 
 
-import Cart from './pages/Cart.jsx'
-import Login from './pages/Login.jsx'
-import Signup from './pages/Signup.jsx'
-import Home from './pages/Home.jsx'
+import Login from "./pages/Login.tsx"
+import Signup from "./pages/Signup.tsx"
+import Home from "./pages/Home.tsx"
+import Room from './pages/Room.tsx'
+import Profile from './pages/Profile.tsx'
 
 const router=createBrowserRouter([
   {path:"/",element:<App/>,children:[
     {path:"/",element:<Home/>},
-    {path:"/cart",element:<Cart/>},
     {path:"/login",element:<Login/>},
-    {path:"/signup",element:<Signup/>}
-  ]
-  }
+    {path:"/signup",element:<Signup/>},
+    {path:"/rooms/:id/messages",element:<Room />},
+    {path:"/profile",element:<Profile />}
+  ]}
 ])
 
-createRoot(document.getElementById('root')).render(
+const root=createRoot(document.getElementById('root') as HTMLElement)
+ 
+root.render(
   <Provider store={store}>
-    <RouterProvider router={router}>
-      <App/>
-    </RouterProvider>
+    <RouterProvider router={router}/>
   </Provider>
 )
