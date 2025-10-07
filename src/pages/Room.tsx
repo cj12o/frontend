@@ -1,17 +1,14 @@
-import React from 'react'
+import React, { Children } from 'react'
+import { ChatFooter,ChatHeader } from '@/components/ChatHeader'
 
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/sidebar"
-import Room from '@/components/room'
-
-export default function Layout() {
+const Room = () => {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <main>
-        <SidebarTrigger />
-        <Room/>
-      </main>
-    </SidebarProvider>
+    <div>
+      <ChatHeader/>
+      hi
+      <ChatFooter/>
+    </div>
   )
 }
+
+export default Room

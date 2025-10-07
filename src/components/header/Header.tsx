@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 function Header() {
 
   const authStatus=useSelector((state:{authStatus:boolean})=>state.authStatus)
+  const name=useSelector((state:{name:string})=>state.name)
 
   const navigate=useNavigate()
   const navItems=[
@@ -22,7 +23,7 @@ function Header() {
     },
     {
       name:"profile",
-      topath:"/profile",
+      topath:`/profile/${name}`,
       isactive:authStatus
     }
   ]

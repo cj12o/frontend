@@ -18,7 +18,7 @@ const router=createBrowserRouter([
     {path:"/login",element:<Login/>},
     {path:"/signup",element:<Signup/>},
     {path:"/rooms/:id/messages",element:<Room />},
-    {path:"/profile",element:<Profile />}
+    {path:"/profile/:name",element:<Profile />}
   ]}
 ])
 
