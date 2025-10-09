@@ -2,19 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { MessageSquare, Plus, Search, Users, TrendingUp, Hash, Clock, User, LogIn, UserPlus } from 'lucide-react';
 import {roomlist} from "../backend/room.ts"
 import { Link } from 'react-router-dom';
-import { logout } from '@/store/authSlice.ts';
+import { addtoHistory } from '@/store/authSlice.ts';
 import { getTopics } from '@/backend/topic.ts';
+import { useDispatch } from 'react-redux';
 
 export default function ChatroomHome() {
+  type memberType={
+    member_name:string,
+    member_id:number,
+  }
   type RoomType = {
     id: string;   
-    author: string;        
-    name: string;
-    description: string;
-    topic: string;
-    is_private: boolean;
-    created_at:Date
-    updated_at:Date
+    author: string;     
+    parent_topic:string,   
+    members: memberType [],
+    name: string,
+    description: string,
+    topic: string,
+    is_private: boolean,
+    created_at:Date,
+    updated_at:Date,
   }
   type TopicType={
     id:number,
@@ -54,19 +61,19 @@ export default function ChatroomHome() {
     }
   };
   
+  const dispatch:any=useDispatch()
+  //Todo :room to redux
+  const addHistory=(room_id:number)=>{
+    console.log(`Clicked room:${room_id}`)
+    dispatch(addtoHistory(room_id))
+  }
+
   useEffect(()=>{
     getrooms()
     get_topics()
     console.log(`Rooms=>${rooms}`)
   },[])
   
-  
-  // const filteredRooms = rooms.filter(room => {
-  //   const matchesSearch = room.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //                        room.description.toLowerCase().includes(searchQuery.toLowerCase());
-  //   const matchesTopic = selectedTopic === 'all' || room.topic.toLowerCase() === selectedTopic;
-  //   return matchesSearch && matchesTopic;
-  // });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -100,10 +107,10 @@ export default function ChatroomHome() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm mb-1">Active Rooms</p>
-                <p className="text-3xl font-bold text-gray-900">24</p>
+                <p className="text-3xl font-bold text-gray-900">{rooms.length}</p>
               </div>
               <div className="bg-indigo-100 p-3 rounded-lg">
-                <MessageSquare className="w-6 h-6 text-indigo-600" />
+                <MessageSquare className="w-6 h-6 text-indigo-600" />c
               </div>
             </div>
           </div>
@@ -193,7 +200,11 @@ export default function ChatroomHome() {
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
                         <Link to={`/rooms/${room.id}/messages`}>
-                        <h4 className="text-xl font-semibold text-gray-900 group-hover:text-indigo-600 transition">
+                        <h4 className="text-xl font-semibold text-gray-900 group-hover:text-indigo-600 transition"
+                        onClick={(e)=>{
+                          e.preventDefault()
+                          addHistory(Number(room.id))}
+                          }>
                           {room.name}
                         </h4>
                         </Link>
@@ -219,6 +230,10 @@ export default function ChatroomHome() {
                         <span className="flex items-center space-x-1">
                           <User className="w-4 h-4" />
                           <span>{room.author}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                          <User className="w-4 h-4" />
+                          <span> members  :{room.members.length}</span>
                         </span>
                         <span className="flex items-center space-x-1">
                           <Clock className="w-4 h-4" />

@@ -25,7 +25,9 @@ const router=createBrowserRouter([
 const root=createRoot(document.getElementById('root') as HTMLElement)
  
 root.render(
+  <>
   <Provider store={store}>
     <RouterProvider router={router}/>
   </Provider>
+  </>
 )

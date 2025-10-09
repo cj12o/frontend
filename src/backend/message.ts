@@ -5,7 +5,7 @@ const postMsg=async (roomid:number,message:string)=>{
          const resp=await axios.post(import.meta.env.VITE_BASE_EPT+`rooms/${roomid}/messages/`
             ,{message}
             ,{headers:{"Content-Type":"application/json",
-                "Authorization":`Bearer ${localStorage.getItem("cookie")}`
+                "Authorization":`Token ${localStorage.getItem("cookie")}`
             }}
         )
         console.log(`resp postMsg:${resp.data}`)
@@ -17,5 +17,23 @@ const postMsg=async (roomid:number,message:string)=>{
     }
 
 }
+// for room
+const getMsg=async (roomid:number)=>{
+    try{
+        const resp=await axios.get(import.meta.env.VITE_BASE_EPT+`rooms/${roomid}/messages/`
+            ,{headers:{"Content-Type":"application/json"}}
+        )
+        console.log(resp.data)
+        return resp.data
 
-export {postMsg}
+    }catch(e:any){
+        const error=e?.response?.data
+        console.log(`Error in postMsg ${error}`)
+    }
+
+}
+
+
+
+export {postMsg,getMsg}
+

@@ -2,8 +2,10 @@ import React from 'react'
 
 const ChatHeader = () => {
   return (
-    <header>
-        room 
+    <header >
+        <div className='bg-indigo-500 h-[8vh] '>
+          {}
+        </div>
     </header>
   )
 }

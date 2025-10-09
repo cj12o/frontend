@@ -16,17 +16,4 @@ const roomlist=async ()=>{
     
 }
 
-const getMessages=async(roomid:number)=>{
-    try{
-        const resp=await axios.get(import.meta.env.VITE_BASE_EPT+`rooms/${roomid}/messages/`,
-            {headers:{"Content-Type":"application/json"}}
-        )
-        console.log(resp)
-        return resp.data
-    }catch(e:any){
-        const error=e.response?.data?.errors
-        throw new Apierror(409,error)
-    }
-}
-
-export {roomlist,getMessages}
+export {roomlist}
