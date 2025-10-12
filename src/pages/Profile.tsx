@@ -3,35 +3,47 @@ import { Camera, Mail, Hash } from 'lucide-react';
 
 import { getProfile } from '@/backend/profile.ts';
 import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 // {
 //     "userdata": [
 //         {
 //             "id": 1,
+//             "profile_pic": "http://127.0.0.1:8000/media/avatars/combined_michhami_dukkadam.jpg",
 //             "bio": "Hi ✌️😀😀",
 //             "last_seen": "2025-10-05T15:57:39Z",
 //             "is_online": true,
-//             "profile_pic": null,
 //             "roles": "admin",
 //             "created_at": "2025-10-05",
 //             "user": 1
 //         }
 //     ],
 //     "name": "chitransh",
-//     "member_rooms": [
-//         "LA pulgha"
+//     "rooms_member": [
+//         "Messi The messia"
 //     ],
 //     "rooms_created": [
-//         [
-//             "Ai",
-//             "Alpha",
-//             "beta"
-//         ]
+//         {
+//             "name": "Messi The messia",
+//             "id": 12
+//         },
+//         {
+//             "name": "crics",
+//             "id": 13
+//         },
+//         {
+//             "name": "cr",
+//             "id": 14
+//         }
 //     ]
 // }
 
+
+
 export default function UserProfile() {
+
+
 
   type userdata={
     id:number,
@@ -43,12 +55,16 @@ export default function UserProfile() {
     created_at:string,
     user:number
   }
-    // from resp
+  type room_det={
+    name:string,
+    id:number
+  }
   type userData={
     userdata:userdata [],
     name:string,
-    member_rooms:string [],
-    rooms_created:string [] []
+    rooms_member:room_det [],
+    email: string,
+    rooms_created:room_det [],
   }
 
 
@@ -70,20 +86,28 @@ export default function UserProfile() {
     getProfileData(params?.name);
   }, []);
   return (
-    <div className="relative grid justify-center h-screen items-center">
+    <div className="relative grid justify-center h-screen items-center bg-blue-200">
       {/* Top Profile Card */}
-      <div className="bg-indigo-300 w-[70vw] h-[40vh] mt-3 text-white rounded-xl shadow-xl hover:shadow-xl shadow-black-600 ">
+      <div className="bg-indigo-300 w-[70vw] h-[40vh] mt-3 text-white rounded-xl shadow-xl hover:shadow-xl shadow-black-600 hover:border-2 border-indigo-600">
         {/* Cover background */}
-        <div className="h-2/3 overflow-hidden rounded-t-xl bg-gradient-to-r from-blue-500 to-purple-600">
+        <div className="h-2/3 overflow-hidden rounded-t-xl bg-gradient-to-r from-blue-500 to-purple-600 ">
           {/* Profile Photo */}
-          <div className="bg-blue-900 relative h-[20vh] w-[20vh] ml-6 mt-6 rounded-full border-2 border-white flex justify-center items-center text-4xl">
-            CJ
-            {/* Camera + Online Dot */}
-            <div className="absolute right-1 bottom-1 justify-items-center bg-white h-[5vh] w-[5vh] ml-6 mt-6 rounded-full border-2 hover:shadow-xl flex items-center justify-center">
-              <Camera className="text-black h-[2.5vh]" />
-              {/* Online dot */}
-              <div className="absolute right-[2px] bottom-[2px] bg-green-500 h-[1vh] w-[1vh] rounded-full border border-white"></div>
-            </div>
+          
+          <div>
+            {
+              data?.userdata[0].profile_pic?(
+                <div className="bg-blue-900 relative h-[20vh] w-[20vh] ml-6 mt-6 rounded-full border-2 border-white flex justify-center items-center text-4xl ">
+                  <img src={data?.userdata[0].profile_pic} alt=""  className='w-full h-full rounded-full'/>
+                </div>
+              ):(
+                 <div className="bg-blue-900 relative h-[20vh] w-[20vh] ml-6 mt-6 rounded-full border-2 border-white flex justify-center items-center text-4xl ">
+                  {data?.name.charAt(0).toUpperCase()}
+                </div>
+              )
+            }
+          
+            <div className="absolute right-[2px] bottom-[2px] bg-green-500 h-[1vh] w-[1vh] rounded-full border border-white"></div>
+            
           </div>
         </div>
 
@@ -99,7 +123,7 @@ export default function UserProfile() {
               <Hash size={16} />
               <span>ID:{data && data.userdata[0].id}</span>
               <Mail size={16} />
-              <span>chitransh@example.com</span>
+              <span>{data?.email}</span>
             </div>
           </div>
 
@@ -112,7 +136,7 @@ export default function UserProfile() {
       </div>
 
       {/* Bio Section */}
-      <div className="bg-white relative shadow-xl font-semibold w-[70vw] h-[20vh] mt-3 text-black p-4 rounded-xl hover:shadow-xl shadow-black-600 ">
+      <div className="bg-white relative shadow-xl font-semibold w-[70vw] h-[20vh] mt-3 text-black p-4 rounded-xl hover:shadow-xl shadow-black-600 hover:border-2 border-indigo-600">
         <h2 className="text-lg font-semibold mb-2">Bio</h2>
         <p className="text-sm leading-relaxed">
           {data &&  data.userdata[0].bio}
@@ -120,7 +144,7 @@ export default function UserProfile() {
       </div>
 
       {/* Rooms/Other Info */}
-      <div className="grid p-3 bg-white shadow-xl w-[70vw] h-[30vh] mt-3 rounded-xl hover:shadow-xl shadow-black-600 ">
+      <div className="grid p-3 bg-white shadow-xl w-[70vw] h-[30vh] mt-3 rounded-xl hover:shadow-xl shadow-black-600 hover:border-2 border-indigo-600">
         <div className="flex">
           <div className="text-lg font-semibold mb-2">created_at:</div>
           <div className="mt-1 ml-2">{data && data.userdata[0].created_at}</div>
@@ -131,13 +155,19 @@ export default function UserProfile() {
         </div>
         <div className="flex">
           <div className="text-lg font-semibold mb-2">Author:</div>
-          <div className="mt-1 ml-2">{data && (data.rooms_created).map((room)=>{
-            return <div>{room+`  `}</div>
-          })}</div>
+          <div className="mt-1 ml-2 flex">
+            {data && (data.rooms_created).map((room)=>{
+              return <Link to={`/rooms/${room.id}/messages`} className='bg-red-300 p-1 rounded-xl m-1 hover:shadow-xl hover:text-blue-500 1'>{` ${room.name} ` }</Link>
+            })}
+          </div>
         </div>
         <div className="flex">
           <div className="text-lg font-semibold mb-2">Member:</div>
-          <div className="mt-1 ml-2">....</div>
+          <div className="mt-1 ml-2">{
+            data?.rooms_member.map((room)=>{
+                return <Link to={`/rooms/${room.id}/messages`} className='bg-green-300 p-1 rounded-xl m-1 hover:shadow-xl hover:text-blue-500'>{` ${room.name} `}</Link>
+            })
+            }</div>
         </div>
       </div>
     </div>

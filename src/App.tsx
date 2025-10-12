@@ -12,11 +12,13 @@ function App() {
 
   const visitedRooms = useSelector((state:any) => state.visitedRoomId);
 
+
   // store latest state in a ref
   const visitedRoomsRef = useRef(visitedRooms);
 
-  visitedRoomsRef.current = visitedRooms; // always keep it updated
 
+  visitedRoomsRef.current = visitedRooms; // always keep it updated
+  
   useEffect(()=>{
     //send data to backend
 
@@ -24,7 +26,6 @@ function App() {
       e.preventDefault()
       sendHist(visitedRoomsRef.current)
       // dispatch(logout())
-
     })
   },[])
   

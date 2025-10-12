@@ -1,9 +1,12 @@
 import axios from "axios";
 
 
-const sendHist=async (data:any)=>{
+const sendHist=async (visited_rooms:any)=>{
     try{
-       
+        const data={
+            visited_rooms:visited_rooms,
+            sessionId:localStorage.getItem("sessionId")
+        }
         console.log(`to send${data}`)
         await axios.post(import.meta.env.VITE_BASE_EPT+'sethistory/',
             {data},

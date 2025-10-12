@@ -1,5 +1,5 @@
 import {MessageSquare,LogIn,UserPlus} from 'lucide-react';
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, useParams} from 'react-router-dom'
 import {Button,Logo,LogoutBtn} from '../index.js'
 import { useSelector } from 'react-redux'
 
@@ -8,7 +8,7 @@ function Header() {
 
   const authStatus=useSelector((state:{authStatus:boolean})=>state.authStatus)
   const name=useSelector((state:{name:string})=>state.name)
-
+  console.log(`Header name ${name}`)
   const navigate=useNavigate()
   const navItems=[
     {
