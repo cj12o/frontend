@@ -11,6 +11,7 @@ import Signup from "./pages/Signup.tsx"
 import Home from "./pages/Home.tsx"
 import Room from './pages/Room.tsx'
 import Profile from './pages/Profile.tsx'
+import Form from './pages/Form.tsx'
 
 const router=createBrowserRouter([
   {path:"/",element:<App/>,children:[
@@ -18,7 +19,8 @@ const router=createBrowserRouter([
     {path:"/login",element:<Login/>},
     {path:"/signup",element:<Signup/>},
     {path:"/rooms/:id/messages",element:<Room />},
-    {path:"/profile/:name",element:<Profile />}
+    {path:"/profile/:name",element:<Profile />},
+    {path:"/createRoom",element:<Form/>}
   ]}
 ])
 

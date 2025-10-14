@@ -6,8 +6,6 @@ import { addtoHistory } from '@/store/authSlice.ts';
 import { getTopics } from '@/backend/topic.ts';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import {Button} from '@/components/index.ts';
-import { getRecommendations } from '@/backend/recommendation.ts';
 
 export default function ChatroomHome() {
   type author={
@@ -31,7 +29,6 @@ export default function ChatroomHome() {
     name:string,
     description:string,
     topic:string,
-    reason?:string,
     is_private:boolean,
     created_at:string,
     updated_at:string,
@@ -42,9 +39,8 @@ export default function ChatroomHome() {
   }
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('all');
-  const [rooms,setRooms]=useState<RoomType[]>([])
+  const[rooms,setRooms]=useState<RoomType[]>([])
   const [topics,setTopics]=useState<TopicType[]>([])
-  const [aiStatus,setAiStatus]=useState(false)
 
   const navigate=useNavigate()
 
@@ -58,15 +54,6 @@ export default function ChatroomHome() {
     }
   };
   
-  const getRecom = async () => {
-    try {
-      const resp:{rooms:RoomType[]} = await getRecommendations();
-      setRooms(resp?.rooms); 
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const get_topics = async () => {
     try {
       const resp= await getTopics()
@@ -93,19 +80,14 @@ export default function ChatroomHome() {
   
 
   const location=useLocation()
-  const extraclass="bg-white"
+
   useEffect(()=>{
-    
-    if(aiStatus==false){
-      getrooms()
-    }else{
-      getRecom()
-    }
+    getrooms()
     get_topics()
     console.log(`Rooms=>${rooms}`)
     
     
-  },[aiStatus])
+  },[])
   
   
   return (
@@ -215,17 +197,9 @@ export default function ChatroomHome() {
           </div>
 
           {/* Main Content - Room List */}
-          {/* //Todo */}
-          <div className="lg:col-span-3">
-            <div className=' w-full h-12 rounded-xl mb-2 '>
-              <Button value="Normal" className={!aiStatus?"m-1 rounded-xl ml-3 text-white":"m-1 rounded-xl ml-3 bg-white text-indigo-800"} onClick={()=>{
-                setAiStatus(false)}
-                }></Button>
 
-              <Button value="Ask AI" className={aiStatus?"m-1 rounded-xl ml-3 text-white":"m-1 rounded-xl ml-3 bg-white text-indigo-800"}  onClick={()=>{
-                setAiStatus(true)}
-                }></Button>  
-            </div>
+          <div className="lg:col-span-3">
+
             <div className="space-y-4">
               {
                 rooms.length>0?(
@@ -236,13 +210,6 @@ export default function ChatroomHome() {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      {
-                        room.reason?
-                        <div className='border-2 border-indigo-300 bg-blue-200 border-rounded rounded-xl p-3 m-3'>
-                          <p>{room.reason}</p>
-                        </div>
-                        :null
-                      }
                       <div className="flex items-center space-x-3 mb-2">
             
                         <Link to={`/rooms/${room.id}/messages`}>
@@ -312,4 +279,4 @@ export default function ChatroomHome() {
       </div>
     </div>
   );
-} 
+}
