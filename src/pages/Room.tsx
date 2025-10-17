@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, use, useContext, useEffect, useState } from 'react';
 import { Send, User, Crown, Users } from 'lucide-react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -6,102 +6,96 @@ import { addtoHistory } from '@/store/authSlice';
 import { roomlist } from '@/backend/room';
 import useWebSocket from 'react-use-websocket';
 import { Link } from 'react-router-dom';
-export default function ChatApp() {
+import type { Room as RoomType ,Message,Moderator,Author,Member,LastJsonMessage} from '@/types/Room.types';
+import { getMsg } from '@/backend/message';
+import {WebSocketContext} from './WebSocketProvider';
+
+function Room() {
   const {id}=useParams()
   //Todo :Websocket 
-    const {sendMessage,lastSendMessage}=useWebSocket(`ws://127.0.0.1:8000/ws/chat/${id}/?token=${localStorage.getItem("cookie")||""}`)
-
+    const {sendMessage,lastJsonMessage}=useContext(WebSocketContext)
+    
   //Todo:end
    
-    type author={
-        id:number,
-        name:string,
-    }
-    type member={
-        member_name:string,
-        member_id:number,
-        status:boolean
-    }
-    type moderator={
-        id:number,
-        username:string,
-        status:boolean
-    }
-    type Room={
-        id:string,
-        author:author,
-        parent_topic:string,
-        members:member [],
-        moderator:moderator []
-        name:string,
-        description:string,
-        topic:string,
-        is_private:boolean,
-        created_at:string,
-        updated_at:string,
-    }
+   
 
   const [message, setMessage] = useState('');
-  const [roomInfo,setRoomInfo]=useState<Room|null>(null)
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      author: 'Alice',
-      content: 'Hey everyone! Welcome to the chat room.',
-      timestamp: '2:30 PM',
-      upvotes: 5
-    },
-    {
-      id: 2,
-      author: 'Bob',
-      content: 'Thanks! Excited to be here.',
-      timestamp: '2:32 PM',
-      upvotes: 3
-    },
-    {
-      id: 3,
-      author: 'Charlie',
-      content: 'This is a great discussion about React and Tailwind!',
-      timestamp: '2:35 PM',
-      upvotes: 8
-    }
-  ]);
+  const [roomInfo,setRoomInfo]=useState< RoomType |null>(null)
+  const [messages, setMessages] = useState<Message []|null>(null);
 
 
 
     const handleSend = () => {
-        if (message.trim()) {
-        const newMessage = {
-            id: messages.length + 1,
-            author: 'You',
-            content: message,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            upvotes: 0
-        };
-        setMessages([...messages, newMessage]);
-        setMessage('');
-        }
+        // if (message.trim()) {
+        // const newMessage = {
+        //     id: messages.length + 1,
+        //     author: 'You',
+        //     content: message,
+        //     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        //     upvotes: 0
+        // };
+        // setMessages([...messages, newMessage]);
+        // setMessage('');
+        // }
     };
 
     const handleUpvote = (id:number) => {
-        setMessages(messages.map(msg => 
-        msg.id === id ? { ...msg, upvotes: msg.upvotes + 1 } : msg
-        ));
+        // setMessages(messages.map(msg => 
+        // msg.id === id ? { ...msg, upvotes: msg.upvotes + 1 } : msg
+        // ));
     };
 
     const location=useLocation()
 
     const getRoomData=async(id:number)=>{
-        const room=await roomlist(id)
-        setRoomInfo(room.rooms[0])
+        try{
+            const room=await roomlist(id)
+            setRoomInfo(room.rooms[0])
+        }catch(e){
+
+        }
     }
 
+    const getMessageData=async(id:number)=>{
+        try{
+            const resp=await getMsg(Number(id))
+            setMessages(resp?.messages)
+        }catch(e){
+
+        }
+    }
     const dispatch=useDispatch()
+
+
+
+    const handleStatus = () => {
+        const username=lastJsonMessage?.["username"]
+        const status=lastJsonMessage?.["status"]
+
+        if(!username) return 
+
+        console.log(`Websocket username:${username}`)
+        if (username){
+            setRoomInfo((prev)=>{
+                if(prev){
+                    return {...prev,
+                        members:prev.members.map((mem:Member)=>{
+                            return mem.member_name==username?{...mem,status:status}:mem
+                        })
+                    }
+                }
+                return prev
+            })
+        }
+        
+    }
 
     useEffect(()=>{
         const start_time=Date.now()
         
         getRoomData(Number(id))
+        getMessageData(Number(id))
+        
 
         return()=>{
             const end_time=Date.now()
@@ -109,7 +103,7 @@ export default function ChatApp() {
             console.log(`time spent in room ${time_spent}`)
             dispatch(addtoHistory({"id":id,"time_spent":time_spent}))
         }
-    },[])
+    },[id])
 
     const sendMsgHandler=()=>{
         sendMessage(message)
@@ -117,7 +111,11 @@ export default function ChatApp() {
         //update messages append newone
     }
 
-
+    useEffect(()=>{
+        if(lastJsonMessage){
+            handleStatus()
+        }
+    },[lastJsonMessage])
   return ( 
     <>
     {
@@ -131,13 +129,13 @@ export default function ChatApp() {
                 <h2 className="text-2xl font-bold mb-3">{roomInfo.name}</h2>
                 <div className="flex items-center gap-2 text-sm mb-2 opacity-90">
                     <Crown className="w-4 h-4 text-yellow-300" />
-                    <span>Moderator: {roomInfo.moderator.map((mod:moderator)=>{
+                    <span>Moderator: {roomInfo.moderator.map((mod:Moderator)=>{
                         return <span>{mod.username}</span>
                     })}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm opacity-90">
                     <User className="w-4 h-4" />
-                    <span>Created by: {roomInfo.author.name}</span>
+                    <span>Created by: {roomInfo.author.username}</span>
                 </div>
                 </div>
 
@@ -181,7 +179,7 @@ export default function ChatApp() {
             <div className="flex-1 flex flex-col">
                 {/* Messages Display */}
                 <div className="flex-1 overflow-y-auto p-8 space-y-4">
-                {messages.map((msg) => (
+                {messages && messages.map((msg) => (
                     <div key={msg.id} className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-indigo-100">
                     <div className="flex gap-4 p-5">
                         {/* Upvote Section */}
@@ -194,30 +192,40 @@ export default function ChatApp() {
                             <path d="M10 3l7 7h-4v7H7v-7H3l7-7z" />
                             </svg>
                         </button>
-                        <span className="text-sm font-bold text-indigo-600">{msg.upvotes}</span>
+                        <span className="text-sm font-bold text-indigo-600">{msg.vote}</span>
                         </div>
 
                         {/* Message Content */}
                         <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                            <span className="font-bold text-indigo-900">{msg.author}</span>
-                            <span className="text-xs text-gray-400">{msg.timestamp}</span>
+                            <span className="font-bold text-indigo-900">{msg.author.username}</span>
+                            <span className="text-xs text-gray-400">{msg.created_at}</span>
                         </div>
-                        <p className="text-gray-700 leading-relaxed">{msg.content}</p>
+                        <p className="text-gray-700 leading-relaxed">{msg.message}</p>
                         </div>
                     </div>
                     </div>
                 ))}
+                    <div>
+                        {lastJsonMessage && lastJsonMessage?.["message"]}
+                    </div>
+                    
                 </div>
 
                 {/* Message Input */}
                 <div className="p-6 bg-white border-t border-indigo-100">
                 <div className="flex gap-3 max-w-4xl mx-auto">
-                    <form action="" onSubmit={sendMsgHandler}>
+                    <form action="" onSubmit={(e)=>{
+                        e.preventDefault()
+                        sendMsgHandler()
+                        }}>
                         <input
                         type="text"
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={(e) =>{
+                            e.preventDefault()
+                            setMessage(e.target.value)
+                        }}
                         placeholder="Type your message..."
                         className="flex-1 px-6 py-3 rounded-full border-2 border-indigo-200 focus:border-indigo-500 focus:outline-none transition-colors duration-200 bg-white"
                         />
@@ -239,3 +247,5 @@ export default function ChatApp() {
     </>
   );
 }
+
+export default Room

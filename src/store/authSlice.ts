@@ -33,6 +33,7 @@ const authSlice=createSlice({
             
         },
         logout:(state)=>{
+            
             localStorage.removeItem("cookie")
             localStorage.removeItem("authStatus")
             localStorage.removeItem("sessionId")

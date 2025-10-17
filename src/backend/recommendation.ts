@@ -14,4 +14,21 @@ const getRecommendations=async()=>{
     }  
 }
 
-export {getRecommendations}
+const SaveRecommendation=async()=>{
+    try{
+        const resp=await axios.post(import.meta.env.VITE_RECOM_EPT,
+            {
+                "sessionId":localStorage.getItem("sessionId")
+            },
+            {headers:{"Content-Type":"application/json",
+                "Authorization":`Token ${localStorage.getItem("cookie")}`}
+            }
+        )
+    }catch(e){
+
+    }
+    
+    
+}
+
+export {getRecommendations,SaveRecommendation}

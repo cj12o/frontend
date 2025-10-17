@@ -4,7 +4,7 @@ import {roomlist} from "../backend/room.ts"
 import { Link, useLocation } from 'react-router-dom';
 import { addtoHistory } from '@/store/authSlice.ts';
 import { getTopics } from '@/backend/topic.ts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {Button} from '@/components/index.ts';
 import { getRecommendations } from '@/backend/recommendation.ts';
@@ -40,6 +40,7 @@ export default function ChatroomHome() {
     id:number,
     topic:string
   }
+  const authStatus=useSelector((state:any)=>state.authStatus)
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('all');
   const [rooms,setRooms]=useState<RoomType[]>([])
@@ -215,14 +216,18 @@ export default function ChatroomHome() {
           </div>
 
           {/* Main Content - Room List */}
-          {/* //Todo */}
+        
           <div className="lg:col-span-3">
             <div className=' w-full h-12 rounded-xl mb-2 '>
               <Button value="Normal" className={!aiStatus?"m-1 rounded-xl ml-3 text-white":"m-1 rounded-xl ml-3 bg-white text-indigo-800"} onClick={()=>{
+        
                 setAiStatus(false)}
                 }></Button>
 
               <Button value="Ask AI" className={aiStatus?"m-1 rounded-xl ml-3 text-white":"m-1 rounded-xl ml-3 bg-white text-indigo-800"}  onClick={()=>{
+                if(!authStatus){
+                  navigate("/login")
+                }
                 setAiStatus(true)}
                 }></Button>  
             </div>
@@ -238,8 +243,11 @@ export default function ChatroomHome() {
                     <div className="flex-1">
                       {
                         room.reason?
-                        <div className='border-2 border-indigo-300 bg-blue-200 border-rounded rounded-xl p-3 m-3'>
-                          <p>{room.reason}</p>
+                        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 mb-4 border border-blue-100">
+                          <p className=' bg-white p-1 rounded-xl'>Recommendation :</p>
+                          <p className="text-slate-700 leading-relaxed">
+                            {room?.reason}
+                          </p>
                         </div>
                         :null
                       }
