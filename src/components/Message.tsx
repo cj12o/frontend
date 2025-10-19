@@ -13,6 +13,8 @@ function Message() {
         id:number,
         author:string,
         message:string,
+        upvotes:number,
+        downvotes:number,
         children: Comment []
     }
     
@@ -37,14 +39,15 @@ function Message() {
 
   
   useEffect(()=>{
-    if(!lastJsonMessage) return 
+    if(!lastJsonMessage || lastJsonMessage.message==="user_status_update") return 
     
     if(lastJsonMessage.parent){
+        console.log("added to exisiting comment")
         setComments((prev)=>addReply(prev))
     }
     
     else{
-        setComments((prev)=>([...prev,{id:lastJsonMessage.id,author:lastJsonMessage.author,message:lastJsonMessage.message,children:[]}]))
+        setComments((prev)=>([...prev,{id:lastJsonMessage.id,author:lastJsonMessage.author,message:lastJsonMessage.message,children:[],upvotes:0,downvotes:0}]))
     }
 
   },[lastJsonMessage])
@@ -76,7 +79,7 @@ function Message() {
         return comments.map((comment)=>{
             if(comment.id==lastJsonMessage.parent){
                 console.log(`lastJson:${lastJsonMessage.message}`)
-                return {...comment,children:[...comment.children,{id:lastJsonMessage.id,author:lastJsonMessage.author,message:lastJsonMessage.message,children:[]}]}
+                return {...comment,children:[...comment.children,{id:lastJsonMessage.id,author:lastJsonMessage.author,message:lastJsonMessage.message,children:[],upvotes:0,downvotes:0}]}
             }
             else if(comment.children.length>0){
                 return {...comment,children:addReply(comment.children)}
@@ -101,20 +104,36 @@ function Message() {
       <div className="flex rounded overflow-hidden">
       
         {/* {votes btn} */}
-        <div className="grid ">
-            <button onClick={()=>{
-                setUpVote((prev)=>(!prev))
-                setDownVote(false)
-            }}>
-            {upvote && !downvote?<ArrowBigUp fill="orange" color="orange"/>:<ArrowBigUp/>}
-            </button>
+        <div className="grid pr-2 ">
+            <div className="flex">
+                <div>
+                <button onClick={()=>{
+                    setUpVote((prev)=>(!prev))
+                    setDownVote(false)
+                    // handleVote()   //Todo
+                }}>
+                {upvote && !downvote?<ArrowBigUp fill="orange" color="orange"/>:<ArrowBigUp/>}
+                </button>
+                </div>
 
-            <button onClick={()=>{
-                setDownVote((prev)=>(!prev))
-                setUpVote(false)
-            }}>
-            {downvote && !upvote?<ArrowBigDown fill="orange" color="orange"/>:<ArrowBigDown/>}
+                <div className="text-center">
+                    {comment.upvotes}
+                </div>
+            </div>
+
+            <div className="flex">
+                <div>
+                    <button onClick={()=>{
+                    setDownVote((prev)=>(!prev))
+                    setUpVote(false)
+                }}>
+                {downvote && !upvote?<ArrowBigDown fill="orange" color="orange"/>:<ArrowBigDown/>}
             </button>
+                </div>
+                <div className="text-center">
+                    {comment.downvotes}
+                </div>
+            </div>
         </div>
 
         {/* {comment} */}
@@ -169,18 +188,22 @@ function Message() {
 
   return (
   <>
-  {
-    comments.map((c)=>{
-      return <RenderComment comment={c} margin={Number(1)}/>
-    })
+  <div className="flex flex-col h-full">
+    <div className="flex-1 overflow-y-auto p-4">
+    {
+        comments.map((c)=>{
+        return <RenderComment comment={c} margin={Number(1)}/>
+        })
     
-  }
-  <div className="p-6 bg-white border-t border-indigo-100">
+    }
+    </div>
+  <div className="p-6 bg-white rounded-md border border-indigo-500">
         <div className="flex gap-3 max-w-4xl mx-auto">
             <form action="" onSubmit={(e)=>{
-                e.preventDefault()
-                handleForm2()
-            }}>
+                    e.preventDefault()
+                    handleForm2()
+                }} className="flex">
+                <div>
                 <input
                 type="text"
                 value={mainInput}
@@ -191,6 +214,9 @@ function Message() {
                 placeholder="Type your message..."
                 className="flex-1 px-6 py-3 rounded-full border-2 border-indigo-200 focus:border-indigo-500 focus:outline-none transition-colors duration-200 bg-white"
                 />
+                </div>
+                
+                <div>
                 <button
                 type='submit'
                 className="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-8 py-3 rounded-full flex items-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
@@ -198,8 +224,10 @@ function Message() {
                     <span>Send</span>
                     <Send className="w-4 h-4" />
                 </button>
+                </div>
             </form>      
         </div>
+    </div>
     </div>
   </>
   )

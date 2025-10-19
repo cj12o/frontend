@@ -70,7 +70,7 @@ function Room() {
     
 
     useEffect(()=>{
-        if(lastJsonMessage){
+        if(lastJsonMessage &&  lastJsonMessage.message=="user_status_update"){
             handleStatus()
         }
     },[lastJsonMessage])
