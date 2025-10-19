@@ -42,6 +42,7 @@ type Room={
     is_private:boolean,
     created_at:string,
     updated_at:string,
+    chidren:number []
 }
 
 

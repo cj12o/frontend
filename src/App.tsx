@@ -39,7 +39,6 @@ function App() {
 
       <Header/>
       <main>
-        Routes
         <Outlet />
       </main>
     </div>
