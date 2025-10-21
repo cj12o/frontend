@@ -9,6 +9,8 @@ import type { Room as RoomType ,Moderator,Member} from '@/types/Room.types';
 
 import {WebSocketContext} from './WebSocketProvider';
 import MessageComponent from "../components/Message.tsx"
+
+
 function Room() {
   const {id}=useParams()
   //Todo :Websocket 
@@ -88,12 +90,23 @@ function Room() {
                 <div className="flex items-center gap-2 text-sm mb-2 opacity-90">
                     <Crown className="w-4 h-4 text-yellow-300" />
                     <span>Moderator: {roomInfo.moderator.map((mod:Moderator)=>{
-                        return <span>{mod.username}</span>
+                        return <span>
+                            <Link to={`/profile/${mod.username}`}
+                            className='hover:text-orange-500'>
+                                {mod.username+`  `}
+                            </Link>
+                            </span>
                     })}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm opacity-90">
                     <User className="w-4 h-4" />
-                    <span>Created by: {roomInfo.author.username}</span>
+                    <span>Created by: 
+                        <Link to={`/profile/${roomInfo.author.name}`}
+                        className='hover:text-orange-500'>
+                            {roomInfo.author.name}
+                        </Link>
+                    </span>
+                    
                 </div>
                 </div>
 

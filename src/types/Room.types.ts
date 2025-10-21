@@ -1,6 +1,6 @@
 //for messages
 type Author={
-    username:string,
+    name:string,
     id:number
 }
 

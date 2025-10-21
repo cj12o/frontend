@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { getMsg } from '@/backend/message';
 import { WebSocketContext } from '../pages/WebSocketProvider';
 import { getVotes } from "@/backend/votes";
+import {Link} from "react-router-dom"
 
 const ExpandedContext = createContext<{
   getExpanded: (id: number) => boolean;
@@ -11,9 +12,13 @@ const ExpandedContext = createContext<{
 } | null>(null);
 
 function Message() {
+    // type Author={
+    //     username:string,
+    //     user_id:number
+    // }
     type Comment = {
         id: number,
-        author: string,
+        author:string,
         message: string,
         upvotes: number,
         downvotes: number,
@@ -73,7 +78,7 @@ function Message() {
             }
 
             else {
-                setComments((prev) => ([...prev, { id: lastJsonMessage.message_id, author: lastJsonMessage.author, message: lastJsonMessage.message, children: [], upvotes: 0, downvotes: 0 }]))
+                setComments((prev) => ([...prev, { id: lastJsonMessage.message_id, author: lastJsonMessage.username, message: lastJsonMessage.message, children: [], upvotes: 0, downvotes: 0 }]))
             }
         }
         else if (lastJsonMessage?.task === "vote" && lastJsonMessage.operation_done == true) {
@@ -152,9 +157,9 @@ function Message() {
     const addReply = (comments: Comment[]): Comment[] => {
 
         return comments.map((comment) => {
-            if (comment.id == lastJsonMessage!.parent) {
+            if (comment.id == lastJsonMessage?.parent) {
                 console.log(`lastJson:${lastJsonMessage}`)
-                return { ...comment, children: [...comment.children, { id: lastJsonMessage!.message_id, author: lastJsonMessage!.author, message: lastJsonMessage!.message, children: [], upvotes: 0, downvotes: 0 }] }
+                return { ...comment, children: [...comment.children, { id: lastJsonMessage?.message_id, author: lastJsonMessage?.username, message: lastJsonMessage?.message, children: [], upvotes: 0, downvotes: 0 }] }
             }
             else if (comment.children.length > 0) {
                 return { ...comment, children: addReply(comment.children) }
@@ -217,7 +222,18 @@ function Message() {
 
                             {/* {comment} */}
                             <div className="w-4/5 grid p-1">
-                                <div className="p-1" id={String(comment.id)}>{comment.message}</div>
+                                <div className="p-1" id={String(comment.id)}>
+                                    <div className="h-1/3 w-full flex ">
+                                        <Link to={`/profile/${comment.author}`}
+                                        className="text-sm text-blue-900 hover:text-orange-500">
+                                            {comment.author}
+                                        </Link>
+                                    </div>
+                                    <div className="mt-1 ">
+                                        {comment.message}
+                                    </div>
+                                    
+                                </div>
                                 {inputBoxNeeded ? (
                                     <form action="" className="flex" onSubmit={(e) => {
                                         e.preventDefault()
