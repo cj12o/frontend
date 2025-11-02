@@ -8,11 +8,11 @@ const WebSocketContext=createContext<any>(null)
 
 const WebSocketContextProvider=({id,children}:{id:string,children:React.ReactNode})=>{
   
-  const url=useMemo(()=>{return `http://127.0.0.1:8000/ws/chat/${id}/?token=${localStorage.getItem("cookie")||""}`},[id])
+  const url=useMemo(()=>{return `ws://127.0.0.1:8000/ws/chat/${id}/?token=${localStorage.getItem("cookie")||""}`},[id])
 
   const {sendMessage,lastJsonMessage}=useWebSocket(url
   ,{
-      shouldReconnect:()=>true,
+      shouldReconnect:()=>false,
   })
 
   const value=useMemo(()=>{

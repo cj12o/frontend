@@ -15,7 +15,9 @@ const authSlice=createSlice({
         cookie:localStorage.getItem("cookie")||null,
         visitedRoomId:[] as History [],
         sessionId:localStorage.getItem("sessionId")||null,
-        name:localStorage.getItem("name")||""
+        name:localStorage.getItem("name")||"",
+        profile_pic:localStorage.getItem("profile_pic")||null
+
     },
     reducers:{
         login:(state:any,action)=>{
@@ -30,7 +32,7 @@ const authSlice=createSlice({
             localStorage.setItem("authStatus",JSON.stringify(true))
             localStorage.setItem("sessionId",seshid)
             localStorage.setItem("name",action.payload.name)
-            
+            localStorage.setItem("profile_pic",action.payload.profile_pic)
         },
         logout:(state)=>{
             
@@ -38,12 +40,14 @@ const authSlice=createSlice({
             localStorage.removeItem("authStatus")
             localStorage.removeItem("sessionId")
             localStorage.removeItem("name")
+            localStorage.removeItem("profile_pic")
 
             // state.visitedRoomId=[]
             state.authStatus=false
             state.cookie=null
             state.sessionId=null
             state.name=""
+            state.profile_pic=null
         },
         addtoHistory:(state,action)=>{
             // console.log("Reducer got payload:", action.payload);

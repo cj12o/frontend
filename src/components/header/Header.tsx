@@ -25,6 +25,11 @@ function Header() {
       name:"profile",
       topath:`/profile/${name}`,
       isactive:authStatus
+    },
+    {
+      name:"chatbot",
+      topath:"/chatbot",
+      isactive:true,
     }
   ]
 

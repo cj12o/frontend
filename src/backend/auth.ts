@@ -19,11 +19,11 @@ const login= async (email:string,password:string,dispatch:Dispatch<any>) => {
         console.log(`response :${resp}`)
         const cookie=resp.data?.token
         const name=resp.data?.name
+        const profile_pic=resp.data?.profile_pic
 
-
-        console.log("Auth js full data=>",resp.data)
-        console.log("Dispatching login with payload:", {cookie});
-        dispatch(reducerLogin({cookie,name}))
+        // console.log("Auth js full data=>",resp.data)
+        // console.log("Dispatching login with payload:", {cookie});
+        dispatch(reducerLogin({cookie,name,profile_pic}))
         return resp.status
     }
     catch(e:any){
