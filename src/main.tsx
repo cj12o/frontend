@@ -13,8 +13,11 @@ import Home from "./pages/Home.tsx"
 import Profile from './pages/Profile.tsx'
 import Form from './pages/Form.tsx'
 import RoomWrapper from './pages/RoomWrapper.tsx'
-import Chatbot from './pages/Chatbot.tsx'
+// import Chatbot from './pages/Chatbot.tsx'
 import Poll from './components/Poll.tsx'
+import Roomcreation from './pages/Roomcreation.tsx'
+import Notification from './pages/Notification.tsx'
+
 
 const router=createBrowserRouter([
   {path:"/",element:<App/>,children:[
@@ -22,10 +25,10 @@ const router=createBrowserRouter([
     {path:"/login",element:<Login/>},
     {path:"/signup",element:<Signup/>},
     {path:"/profile/:name",element:<Profile />},
-    {path:"/createRoom",element:<Form/>},
+    {path:"/createRoom",element:<Roomcreation/>},
     {path:"/rooms/:id/messages",element:<RoomWrapper />},
-    {path:"/chatbot",element:<Chatbot/>},
-    {path:"/polls/:id/",element:<Poll id={2}/>}
+    {path:"/polls/:id/",element:<Poll id={2}/>},
+    {path:"/notifications",element:<Notification/>},
   ]}
 ])
 

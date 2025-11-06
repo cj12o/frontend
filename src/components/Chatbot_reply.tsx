@@ -4,8 +4,10 @@ import { ChatbotContext } from '@/pages/Chatbot'
 
 import { useParams } from 'react-router-dom';
 
-function Chatbot_reply(){
-    const {sendMessage,lastMessage}=useWebSocket("http://127.0.0.1:8000/ws/chatbot/")
+function Chatbot_reply({id}:{id:number}){
+
+    console.log(`WS URL ws://127.0.0.1:8000/ws/chatbot/${id}/`)
+    const {sendMessage,lastMessage}=useWebSocket(`ws://127.0.0.1:8000/ws/chatbot/${id}/?token=${localStorage.getItem("cookie")||""}`)
 
     const {setLlmResp,setQuery}=useContext(ChatbotContext)
     const [question,setQuestion]=useState("")
@@ -22,7 +24,8 @@ function Chatbot_reply(){
     }
     useEffect(()=>{
         if(lastMessage?.data){
-            if(JSON.parse(lastMessage.data)?.status==="done"){
+           
+            if(JSON.parse(lastMessage.data)?.status==="done" ){
                 return
             }
             const id=JSON.parse(lastMessage.data)["id"]

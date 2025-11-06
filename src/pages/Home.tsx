@@ -184,6 +184,27 @@ export default function ChatroomHome() {
               </div>
               
               <div className="space-y-2">
+                {
+                  <button
+                    onClick={() => topicWiseRoom("")}
+
+                    
+                    className={`w-full text-left px-4 py-3 rounded-lg transition ${
+                      selectedTopic === "All"
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
+                        : 'hover:bg-gray-50 text-gray-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{"All"}</span>
+                      <span className={`text-sm ${
+                        selectedTopic === "All" ? 'text-indigo-100' : 'text-gray-500'
+                      }`}>
+                        12
+                      </span>
+                    </div>
+                  </button>
+                }
                 {topics.map((topic) => (
                   <button
                     key={topic.id}
@@ -208,7 +229,9 @@ export default function ChatroomHome() {
                 ))}
               </div>
 
-              <button className="w-full mt-6 flex items-center justify-center space-x-2 px-4 py-3 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium">
+              <button className="w-full mt-6 flex items-center justify-center space-x-2 px-4 py-3 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium"
+              onClick={()=>navigate("/createroom")}
+              >
                 <Plus className="w-5 h-5" />
                 <span>Create Room</span>
               </button>

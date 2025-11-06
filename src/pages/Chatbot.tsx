@@ -5,6 +5,7 @@ const ChatbotContext = createContext<any>(null);
 
 const Chatbot = ({ id }: { id: number }) => {
   const chatbotlogo = "http://127.0.0.1:8000/media/avatars/agent_XOcSxeh.jpg";
+
   const [llmResp, setLlmResp] = useState<Record<number, string>>({});
   const [query, setQuery] = useState<Record<number, string>>({});
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -14,12 +15,12 @@ const Chatbot = ({ id }: { id: number }) => {
   }, [llmResp, query]);
 
   console.log(`rendered roomid => ${id}`);
-
+  
   return (
     <div className="flex flex-col h-full w-full bg-gray-50">
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         <ChatbotContext.Provider value={{ setLlmResp, setQuery }}>
-          <Chatbot_reply />
+          <Chatbot_reply id={id}/>
         </ChatbotContext.Provider>
 
         {Object.entries(llmResp).map(([key, value]) => {
@@ -28,7 +29,7 @@ const Chatbot = ({ id }: { id: number }) => {
           return (
             <div key={key} className="space-y-3">
               {/* User message */}
-              <div className="flex justify-end items-end gap-2">
+              {query[key] && <div className="flex justify-end items-end gap-2">
                 <div className="max-w-[75%] bg-green-100 text-gray-800 px-4 py-2 rounded-2xl rounded-br-none break-words shadow-sm">
                   {query[key]}
                 </div>
@@ -45,7 +46,8 @@ const Chatbot = ({ id }: { id: number }) => {
                     </div>
                   )}
                 </div>
-              </div>
+              </div>}
+              
 
               {/* Bot message*/}
               <div className="flex justify-start items-end gap-2">
