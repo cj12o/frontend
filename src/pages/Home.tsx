@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MessageSquare, Plus, Search, Users, TrendingUp, Hash, Clock, User, LogIn, UserPlus,Tags } from 'lucide-react';
-import {roomlist} from "../backend/room.ts"
+import {roomlist,roomlistpost,roomlitprev} from "../backend/room.ts"
 import { Link, useLocation } from 'react-router-dom';
 import { addtoHistory } from '@/store/authSlice.ts';
 import { getTopics } from '@/backend/topic.ts';
@@ -35,6 +35,7 @@ export default function ChatroomHome() {
     is_private:boolean,
     created_at:string,
     updated_at:string,
+    tags:string []
   }
   type TopicType={
     id:number,
@@ -46,14 +47,48 @@ export default function ChatroomHome() {
   const [rooms,setRooms]=useState<RoomType[]>([])
   const [topics,setTopics]=useState<TopicType[]>([])
   const [aiStatus,setAiStatus]=useState(false)
+  
+
+ ///FOR pagination
+  const[nextpageStatus,setNextpageStatus]=useState(false)
+  const[prevpageStatus,setPrevpageStatus]=useState(false)
 
   const navigate=useNavigate()
 
   
   const getrooms = async () => {
     try {
-      const resp:{rooms:RoomType[]} = await roomlist();
-      setRooms(resp?.rooms); 
+      const resp = await roomlist();
+      setRooms(resp?.results); 
+      if(resp?.next) setNextpageStatus(true)
+      if(resp?.previous) setPrevpageStatus(true)
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+
+
+
+  const getroomsNext = async () => {
+    try {
+      const resp = await roomlistpost();
+      setRooms(resp?.results); 
+      if(resp?.next) setNextpageStatus(true)
+      if(resp?.previous) setPrevpageStatus(true)
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+
+
+  const getroomsPrev = async () => {
+    try {
+      const resp = await roomlistpost();
+      setRooms(resp?.results); 
+      if(resp?.next) setNextpageStatus(true)
+      if(resp?.previous) setPrevpageStatus(true)
     } catch (e) {
       console.log(e);
     }
@@ -81,8 +116,8 @@ export default function ChatroomHome() {
   const topicWiseRoom=async(topic:string)=>{
     //for parent topic
     try{
-      const resp:{rooms:RoomType[]}=await roomlist(0,topic)
-      setRooms(resp?.rooms)
+      const resp=await roomlist(0,topic)
+      setRooms(resp?.results)
       setSelectedTopic(topic)
     }catch(e){
 
@@ -312,6 +347,14 @@ export default function ChatroomHome() {
                           <Clock className="w-4 h-4" />
                           <span>lastActivity</span>
                         </span>
+                        <span className="flex items-center space-x-1">
+                          <Tags className="w-4 h-4" />
+                          {
+                            room.tags && room.tags.map((t)=>{
+                              return <span className='bg-red-200 p-1 rounded'>{t}</span>
+                            })
+                          }
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -337,6 +380,16 @@ export default function ChatroomHome() {
                   </div>
                 )
               }
+              <div className='flex w-full'>
+                {
+                  prevpageStatus?<button className='p-2 border-2 border-black rounded-md'
+                  onClick={getroomsPrev}>Prev</button>:null
+                }
+                {
+                  nextpageStatus?<button className='p-2 border-2 border-black rounded-md'
+                  onClick={getroomsNext}>Next</button>:null
+                }
+              </div>
             </div>
           </div>
         </div>

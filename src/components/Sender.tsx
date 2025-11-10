@@ -1,6 +1,6 @@
 import React,{useContext,useState} from 'react'
 import { WebSocketContext } from '../pages/WebSocketProvider';
-
+import { Clipboard } from 'lucide-react';
 export const Sender = () => {
     const { sendMessage, lastJsonMessage } = useContext(WebSocketContext)
     const [input,setMainInput]=useState("")
@@ -37,6 +37,9 @@ export const Sender = () => {
                         <button type='submit' className='ml-3 p-2 rounded bg-blue-500'
                         >Send</button>
                     </div>
+                    <form>
+                        <input type="file"/>
+                    </form>
                 </div>        
             </form>
         </div>

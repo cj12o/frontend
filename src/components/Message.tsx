@@ -387,10 +387,25 @@ const PollComp=React.memo(({id}:{id:number})=>{
 })
 
 function Message() {
+        // {
+        //     "id": 547,
+        //     "author": "chitransh",
+        //     "room": "Messi The messia",
+        //     "message": "wfrff",
+        //     "images_msg": null,
+        //     "file_msg": null,
+        //     "parent": null,
+        //     "upvotes": 0,
+        //     "downvotes": 0,
+        //     "children": [],
+        //     "hasPoll": false
+        // },
     type Comment = {
         id: number,
         author:string,
         message: string,
+        images_msg:string,
+        file_msg:string,
         upvotes: number,
         downvotes: number,
         children: Comment[],
@@ -445,13 +460,13 @@ function Message() {
 
         if (!lastJsonMessage) return
         console.log(`Agent task:${lastJsonMessage.task}`)
-        if (lastJsonMessage.task === "chat") {
+        if (lastJsonMessage.task === "chat" || ( lastJsonMessage.task==="AgentActivity" && lastJsonMessage.tool_called=="threadGenerator")) {
             if (lastJsonMessage.parent) {
                 console.log("added to exisiting comment")
                 setComments((prev) => addReply(prev))
             }
             else {
-                setComments((prev) => ([...prev, { id: lastJsonMessage.message_id, author: lastJsonMessage.username, message: lastJsonMessage.message, children: [], upvotes: 0, downvotes: 0 ,hasPoll:false}]))
+                setComments((prev) => ([...prev, { id: lastJsonMessage.message_id, author: lastJsonMessage.username, message: lastJsonMessage.message,images_msg:"",file_msg:"",children: [], upvotes: 0, downvotes: 0 ,hasPoll:false}]))
             }
         }
         else if (lastJsonMessage?.task === "vote" && lastJsonMessage.operation_done == true) {
@@ -481,7 +496,9 @@ function Message() {
             {
                 id: lastJsonMessage.message_id,
                 author: lastJsonMessage.username,
-                message: lastJsonMessage.question, // show question as the text
+                message: lastJsonMessage.question, // show question as the text"
+                images_msg:"",
+                file_msg:"",
                 children: [],
                 upvotes: 0,
                 downvotes: 0,
@@ -549,7 +566,7 @@ function Message() {
         return comments.map((comment) => {
             if (comment.id == lastJsonMessage?.parent) {
                 console.log(`lastJson:${lastJsonMessage}`)
-                return { ...comment, children: [...comment.children, { id: lastJsonMessage?.message_id, author: lastJsonMessage?.username, message: lastJsonMessage?.message, children: [], upvotes: 0, downvotes: 0,hasPoll:false}] }
+                return { ...comment, children: [...comment.children, { id: lastJsonMessage?.message_id, author: lastJsonMessage?.username, message: lastJsonMessage?.message,images_msg:"",file_msg:"",children: [], upvotes: 0, downvotes: 0,hasPoll:false}] }
             }
             else if (comment.children.length > 0) {
                 return { ...comment, children: addReply(comment.children) }
@@ -625,6 +642,12 @@ function Message() {
                                 </div>
                                 <div className="text-gray-800 break-words">
                                     {comment.message}
+                                    <div>
+                                        {comment.images_msg}
+                                    </div>
+                                    <div>
+                                        {comment.file_msg}
+                                    </div>
                                 </div>
                                 
                                 {inputBoxNeeded && (
