@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MessageSquare, Plus, Search, Users, TrendingUp, Hash, Clock, User, LogIn, UserPlus,Tags } from 'lucide-react';
-import {roomlist,roomlistpost,roomlitprev} from "../backend/room.ts"
+import {roomlist,roomlistpost,roomlitprev} from "../backend/room_list.ts"
 import { Link, useLocation } from 'react-router-dom';
 import { addtoHistory } from '@/store/authSlice.ts';
 import { getTopics } from '@/backend/topic.ts';
@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {Button} from '@/components/index.ts';
 import { getRecommendations } from '@/backend/recommendation.ts';
+import { delMember,addMember } from '@/backend/member.ts';
 
 export default function ChatroomHome() {
   type author={
@@ -35,11 +36,16 @@ export default function ChatroomHome() {
     is_private:boolean,
     created_at:string,
     updated_at:string,
-    tags:string []
+    tags:string [],
+    isMember:boolean,
   }
   type TopicType={
     id:number,
     topic:string
+  }
+  type MemeberStatus={
+    room_id:number,
+    status:boolean
   }
   const authStatus=useSelector((state:any)=>state.authStatus)
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,7 +58,7 @@ export default function ChatroomHome() {
  ///FOR pagination
   const[nextpageStatus,setNextpageStatus]=useState(false)
   const[prevpageStatus,setPrevpageStatus]=useState(false)
-
+  const [memberStatus,setMemberStatus]=useState<MemeberStatus []>([])
   const navigate=useNavigate()
 
   
@@ -143,7 +149,14 @@ export default function ChatroomHome() {
     
   },[aiStatus])
   
-  
+  const unsubscribe=(room_id:number)=>{
+    delMember(room_id)
+    getrooms()
+  }
+  const subscribe=(room_id:number)=>{
+    addMember(room_id)
+    getrooms()
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
 
@@ -363,13 +376,31 @@ export default function ChatroomHome() {
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     {
                       room.is_private?(
-                      <button className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-md transition opacity-0 group-hover:opacity-100">
+                      <button className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-md transition opacity-0 opacity-100">
                         Request to Join
                       </button>
                       ):(
-                        <button className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-md transition opacity-0 group-hover:opacity-100">
-                        Join
+                        <button
+                          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-md transition"
+                          onClick={() => {
+                            // Update UI instantly
+                            setRooms(prevRooms =>
+                              prevRooms.map(r =>
+                                r.id === room.id ? { ...r, isMember: !r.isMember } : r
+                              )
+                            );
+
+                            // Then call backend asynchronously
+                            if (room.isMember) {
+                              unsubscribe(Number(room.id));
+                            } else {
+                              subscribe(Number(room.id));
+                            }
+                          }}
+                        >
+                          {room.isMember ? "UnSub" : "Sub"}
                         </button>
+
                       )
                     }
                   </div>

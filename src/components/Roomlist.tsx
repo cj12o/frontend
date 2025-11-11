@@ -2,7 +2,7 @@ import React from 'react'
 import { useState,useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { roomlist } from '@/backend/room'
+import { roomlist } from '@/backend/room_list'
 import { Link } from 'react-router-dom'
 import { MessageSquare, Plus, Search, Users, TrendingUp, Hash, Clock, User, LogIn, UserPlus,Tags } from 'lucide-react';
 
