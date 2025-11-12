@@ -1,10 +1,15 @@
 import axios from "axios";
 
-const postMsg=async (roomid:number,message:string)=>{
+const postMsg=async (roomid:number,message:string,file:File|null,image:File|null)=>{
     try{
-         const resp=await axios.post(import.meta.env.VITE_BASE_EPT+`rooms/${roomid}/messages/`
-            ,{message}
-            ,{headers:{"Content-Type":"application/json",
+        const data=new FormData()
+        data.append("message",message)
+        if(file) data.append("file",file)
+        if(image) data.append("image",image)
+
+        const resp=await axios.post(import.meta.env.VITE_BASE_EPT+`rooms/${roomid}/messages/`
+            ,data
+            ,{headers:{
                 "Authorization":`Token ${localStorage.getItem("cookie")}`
             }}
         )

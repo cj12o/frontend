@@ -27,6 +27,7 @@ const authSlice=createSlice({
             state.cookie=action.payload.cookie
             state.sessionId=seshid
             state.name=action.payload.name
+        
             //local storage
             localStorage.setItem("cookie",action.payload.cookie)
             localStorage.setItem("authStatus",JSON.stringify(true))
@@ -41,6 +42,7 @@ const authSlice=createSlice({
             localStorage.removeItem("sessionId")
             localStorage.removeItem("name")
             localStorage.removeItem("profile_pic")
+            localStorage.removeItem("visitedRoomId")
 
             // state.visitedRoomId=[]
             state.authStatus=false
@@ -48,6 +50,7 @@ const authSlice=createSlice({
             state.sessionId=null
             state.name=""
             state.profile_pic=null
+            state.visitedRoomId=[]
         },
         addtoHistory:(state,action)=>{
             // console.log("Reducer got payload:", action.payload);

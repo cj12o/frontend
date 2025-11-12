@@ -466,7 +466,7 @@ function Message() {
                 setComments((prev) => addReply(prev))
             }
             else {
-                setComments((prev) => ([...prev, { id: lastJsonMessage.message_id, author: lastJsonMessage.username, message: lastJsonMessage.message,images_msg:"",file_msg:"",children: [], upvotes: 0, downvotes: 0 ,hasPoll:false}]))
+                setComments((prev) => ([...prev, { id: lastJsonMessage.message_id, author: lastJsonMessage.username, message: lastJsonMessage.message,images_msg:lastJsonMessage.image_url,file_msg:lastJsonMessage.file_url,children: [], upvotes: 0, downvotes: 0 ,hasPoll:false}]))
             }
         }
         else if (lastJsonMessage?.task === "vote" && lastJsonMessage.operation_done == true) {
@@ -640,15 +640,36 @@ function Message() {
                                         {comment.author}
                                     </Link>
                                 </div>
-                                <div className="text-gray-800 break-words">
-                                    {comment.message}
-                                    <div>
-                                        {comment.images_msg}
-                                    </div>
-                                    <div>
-                                        {comment.file_msg}
-                                    </div>
+                                <div className="text-gray-800 break-words space-y-2">
+                                <p>{comment.message}</p>
+
+                                {/* If there's an image */}
+                                    {comment.images_msg && (
+                                        <div>
+                                            <img
+                                                src={comment.images_msg}
+                                                alt="attachment"
+                                                className="rounded-lg border border-gray-300 max-w-sm mt-2"
+                                                onError={(e) => (e.currentTarget.style.display = "none")}
+                                            />
+                                        </div>
+                                    )}
+
+                                    {/* If there's a file */}
+                                    {comment.file_msg && (
+                                        <div className="mt-2">
+                                            <a
+                                                href={comment.file_msg}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-blue-600 underline hover:text-blue-800"
+                                            >
+                                                📎 Download File
+                                            </a>
+                                        </div>
+                                    )}
                                 </div>
+
                                 
                                 {inputBoxNeeded && (
                                     <form 
