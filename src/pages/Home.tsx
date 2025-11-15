@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MessageSquare, Plus, Search, Users, TrendingUp, Hash, Clock, User, LogIn, UserPlus,Tags } from 'lucide-react';
-import {roomlist,roomlistpost,roomlitprev} from "../backend/room_list.ts"
+import {roomlist,roomlistpost,roomlistprev} from "../backend/room_list.ts"
 import { Link, useLocation } from 'react-router-dom';
 import { addtoHistory } from '@/store/authSlice.ts';
 import { getTopics } from '@/backend/topic.ts';
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import {Button} from '@/components/index.ts';
 import { getRecommendations } from '@/backend/recommendation.ts';
 import { delMember,addMember } from '@/backend/member.ts';
-
+import Searchbar from '@/components/HomePage/Searchbar.tsx';
 export default function ChatroomHome() {
   type author={
     id:number,
@@ -47,8 +47,14 @@ export default function ChatroomHome() {
     room_id:number,
     status:boolean
   }
+
+
+  type dataForDynamicQuery={
+    need:number,
+    keyword:string
+  }
   const authStatus=useSelector((state:any)=>state.authStatus)
-  const [searchQuery, setSearchQuery] = useState('');
+  const [queryforDynamicSearch, setQueryforDynamicSearch] = useState<dataForDynamicQuery>({need:-1,keyword:""});
   const [selectedTopic, setSelectedTopic] = useState('all');
   const [rooms,setRooms]=useState<RoomType[]>([])
   const [topics,setTopics]=useState<TopicType[]>([])
@@ -62,9 +68,10 @@ export default function ChatroomHome() {
   const navigate=useNavigate()
 
   
+  
   const getrooms = async () => {
     try {
-      const resp = await roomlist();
+      const resp = await roomlist(queryforDynamicSearch?.need,queryforDynamicSearch?.keyword);
       setRooms(resp?.results); 
       if(resp?.next) setNextpageStatus(true)
       if(resp?.previous) setPrevpageStatus(true)
@@ -73,12 +80,12 @@ export default function ChatroomHome() {
     }
   };
 
-
+  //todo:
 
 
   const getroomsNext = async () => {
     try {
-      const resp = await roomlistpost();
+      const resp = await roomlistpost(queryforDynamicSearch?.need,queryforDynamicSearch?.keyword);
       setRooms(resp?.results); 
       if(resp?.next) setNextpageStatus(true)
       if(resp?.previous) setPrevpageStatus(true)
@@ -91,7 +98,7 @@ export default function ChatroomHome() {
 
   const getroomsPrev = async () => {
     try {
-      const resp = await roomlistpost();
+      const resp =await roomlistprev(queryforDynamicSearch?.need,queryforDynamicSearch?.keyword);
       setRooms(resp?.results); 
       if(resp?.next) setNextpageStatus(true)
       if(resp?.previous) setPrevpageStatus(true)
@@ -157,6 +164,10 @@ export default function ChatroomHome() {
     addMember(room_id)
     getrooms()
   }
+  //for search bar
+  useEffect(()=>{
+    getrooms()
+  },[queryforDynamicSearch])
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
 
@@ -172,14 +183,7 @@ export default function ChatroomHome() {
           
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search for rooms..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:outline-none text-lg shadow-sm"
-            />
+            <Searchbar value={{queryforDynamicSearch,setQueryforDynamicSearch}}/>
           </div>
         </div>
 
@@ -361,6 +365,9 @@ export default function ChatroomHome() {
                           <span>lastActivity</span>
                         </span>
                         <span className="flex items-center space-x-1">
+                          <span>{`Category : ${room.parent_topic}`}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
                           <Tags className="w-4 h-4" />
                           {
                             room.tags && room.tags.map((t)=>{
@@ -390,7 +397,7 @@ export default function ChatroomHome() {
                               )
                             );
 
-                            // Then call backend asynchronously
+                            
                             if (room.isMember) {
                               unsubscribe(Number(room.id));
                             } else {

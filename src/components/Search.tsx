@@ -1,19 +1,24 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 
-const Search = () => {
+
+const Search = ({value}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [chosenMod, setChosenMode] = useState(false);
-  const [moderators, setModerators] = useState<string[]>([]);
+  // const [moderators, setModerators] = useState<string[]>([]);
   const [dropDownStatus, setDropDownStatus] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const pagination_limit = 5;
 
-  const moderator = [
+  
+  const moderators = [
     localStorage.getItem("name"),
-    "auto mod"
+    "auto mod",
+    "semi auto mod"
   ];
-
+  // const {moderator,setModerator} = useContext(SearchContext)
+  
+  const {moderator,setModerator}=value
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -30,13 +35,13 @@ const Search = () => {
     };
   }, []);
 
-  useEffect(() => {}, [moderators]);
+  // useEffect(() => {}, [moderator]);
 
   // ✅ Show all mods if searchQuery is empty
   const filteredMods =
     searchQuery.trim() === ""
-      ? moderator
-      : moderator.filter((mod) =>
+      ? moderators
+      : moderators.filter((mod:any) =>
           mod.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
@@ -60,8 +65,8 @@ const Search = () => {
     <div className="w-2/3 relative" ref={containerRef}>
       <span className="font-semibold mb-3">MODS CHOSEN:</span>
       <div className="w-full flex flex-wrap gap-2 mt-2 mb-3">
-        {moderators.length > 0 ? (
-          moderators.map((mod) => (
+        {moderator.length > 0 ? (
+          moderator.map((mod:any) => (
             <div
               key={mod}
               className="group flex bg-red-200 rounded-3xl items-center"
@@ -69,7 +74,7 @@ const Search = () => {
               <div className="text-black px-2 py-1 rounded-full">{mod}</div>
               <button
                 onClick={() =>
-                  setModerators((prev) => prev.filter((ele) => ele !== mod))
+                  setModerator((prev:any) => prev.filter((ele:any) => ele !== mod))
                 }
                 className="hidden group-hover:inline text-sm ml-1 rounded-full"
               >
@@ -95,13 +100,15 @@ const Search = () => {
       {/* Dropdown below input */}
       {!chosenMod && dropDownStatus && filteredMods.length > 0 && (
         <div className="absolute z-10 w-full bg-white border border-gray-300 mt-1 rounded shadow-lg max-h-40 overflow-y-auto">
-          {filteredMods.slice(0, pagination_limit).map((mod) => (
+          {filteredMods.slice(0, pagination_limit).map((mod:any) => (
             <div
               key={mod}
               onClick={(e) => {
                 e.preventDefault();
-                if (moderators.includes(mod)) return;
-                setModerators((prev) => [...prev, mod]);
+                if (moderator.includes(mod)) return;
+                //disable to limit 1 moderator
+                // setModerator((prev:any) => [...prev, mod]);
+                setModerator((prev:any) => [mod]);
                 setSearchQuery(mod);
                 setChosenMode(true);
                 setDropDownStatus(false);

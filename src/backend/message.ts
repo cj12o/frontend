@@ -40,5 +40,24 @@ const getMsg=async (roomid:number)=>{
 
 
 
-export {postMsg,getMsg}
+const deleteMsg=async (roomid:number,message_id:number)=>{
+    try{
+        const data={id:roomid}
+        const resp=await axios.delete(import.meta.env.VITE_BASE_EPT+`rooms/${roomid}/messages/?id=${message_id}`
+            ,{headers:{
+                "Authorization":`Token ${localStorage.getItem("cookie")}`
+            }}
+        )
+        console.log(`resp postMsg:${resp.data}`)
+        return resp.status
+
+    }catch(e:any){
+        const error=e?.response?.data
+        console.log(`Error in postMsg ${error}`)
+    }
+
+}
+
+
+export {postMsg,getMsg,deleteMsg}
 

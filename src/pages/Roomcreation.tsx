@@ -1,28 +1,58 @@
-import { useEffect, useState } from "react";
+
+import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Divide, Tags } from "lucide-react";
 import Search from "@/components/Search";
+import { createRoom } from "@/backend/room";
+
 
 export default function CreateRoom() {
   const[roomName,setRoomName]=useState("")
   const[roomDescription,setRoomDescription]=useState("")
   const[tags,setTags]=useState<string []>([])
   const [tag,setTag]=useState("")
+  const [topic,setTopic]=useState("")
+  const [privateStatus,setPrivateStatus]=useState(false)
   
   const [error,setError]=useState("")
+  
+  const[loading,setLoading]=useState(false)
+
+  //todo: mods
+  const [moderator, setModerator] = useState<string[]>([]);
+  
+  //todo  
 
   useEffect(()=>{
     if(error.length>0){
-        alert(error)
         setError("")
     }
   },[tags,error])
 
-  
+  const submitHandler=async()=>{
+    setLoading(true)
+    const resp=await createRoom(roomName,roomDescription,topic,privateStatus,tags,moderator)
+    if(resp===200){
+      setLoading(false)
+      alert("Room created successfully")
+    }
+    else{
+      setLoading(false)
+      setError("Room creation failed")
+    }
+  }  
 
   return (
     <div className="min-h-screen bg-white text-gray-900 p-8">
-   
+    {loading && (
+      <div className="fixed inset-0 bg-white bg-opacity-40 flex justify-center items-center">
+        <div className="h-10 w-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    )}
+
+    {
+      error.length>0?<p className="text-red-600">{error}</p>:null
+    }
       <h1 className="text-2xl font-semibold mb-4">Create Room</h1>
     
       <div className="space-y-4 max-w-sm">
@@ -39,13 +69,27 @@ export default function CreateRoom() {
         <div>
           <input
             type="text"
+            placeholder="Room Topic"
+            className="border border-gray-300 px-3 py-2 w-full"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <input
+            type="text"
             placeholder="Description"
             className="border border-gray-300 px-3 py-2 w-full"
             value={roomDescription}
             onChange={(e) => setRoomDescription(e.target.value)}
           />
         </div>
-
+        <div className="flex ">
+          <label htmlFor="checkbox" className="mr-5">Private</label>
+          <input type="checkbox" name="checkbox" id="" 
+          onChange={(e)=>setPrivateStatus(!privateStatus)}/>
+        </div>
         <div >
           <input
             type="text"
@@ -99,11 +143,11 @@ export default function CreateRoom() {
         <div
         >
           
-          <Search/>
+          <Search value={{setModerator,moderator}}/>
         </div>
 
         <button
-          
+          onClick={()=>submitHandler()}
           className="bg-blue-600 text-white px-4 py-2"
         >
           Create
