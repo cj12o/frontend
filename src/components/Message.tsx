@@ -91,10 +91,7 @@ function Message() {
 
         if (!lastJsonMessage) return
         console.log(`Agent task:${lastJsonMessage.task}`)
-        if(lastJsonMessage.task=="deleteMessage"){
-            setComments((prev) => prev.filter((comment) => comment.id !== lastJsonMessage.message_id))  
-        }
-        else if (lastJsonMessage.task === "chat" || ( lastJsonMessage.task==="AgentActivity" && lastJsonMessage.tool_called=="threadGenerator")) {
+        if (lastJsonMessage.task === "chat" || ( lastJsonMessage.task==="AgentActivity" && lastJsonMessage.tool_called=="threadGenerator")) {
             if (lastJsonMessage.parent) {
                 console.log("added to exisiting comment")
                 setComments((prev) => addReply(prev))
@@ -102,6 +99,12 @@ function Message() {
             else {
                 setComments((prev) => ([...prev, { id: lastJsonMessage.message_id, author: lastJsonMessage.username, message: lastJsonMessage.message,images_msg:lastJsonMessage.image_url,file_msg:lastJsonMessage.file_url,children: [], upvotes: 0, downvotes: 0 ,hasPoll:false}]))
             }
+        }
+        else if(lastJsonMessage.task=="deleteMessage"){
+            setComments((prev) => prev.filter((comment) => comment.id !== lastJsonMessage.message_id))  
+        }
+        else if(lastJsonMessage.task=="editMessage"||lastJsonMessage.task=="moddedMessage"){
+            setComments((prev) => prev.map((comment) => comment.id === lastJsonMessage.message_id ? { ...comment, message: lastJsonMessage.message } : comment))
         }
         else if (lastJsonMessage?.task === "vote" && lastJsonMessage.operation_done == true) {
             const voteType = lastJsonMessage.vote_type

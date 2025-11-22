@@ -52,6 +52,15 @@ const authSlice=createSlice({
             state.profile_pic=null
             state.visitedRoomId=[]
         },
+        setName:(state,action)=>{
+            state.name=action.payload
+            localStorage.setItem("name",action.payload)
+
+        },
+        setProfile:(state,action)=>{
+            state.profile_pic=action.payload
+            localStorage.setItem("profile_pic",action.payload)
+        },
         addtoHistory:(state,action)=>{
             // console.log("Reducer got payload:", action.payload);
             const id=Number(action.payload.id)
@@ -61,5 +70,5 @@ const authSlice=createSlice({
     
 })
 
-export const {login,logout,addtoHistory}=authSlice.actions
+export const {login,logout,addtoHistory,setProfile,setName}=authSlice.actions
 export default authSlice.reducer

@@ -3,7 +3,7 @@ import {useNavigate, useParams,Link} from 'react-router-dom'
 import {Button,Logo,LogoutBtn} from '../index.js'
 import { useSelector } from 'react-redux'
 import { useState } from 'react';
-import { Bell, X } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import Notification from '@/pages/Notification.js';
 
 
@@ -18,8 +18,12 @@ function Header() {
   const [dropDownStatus,setDropDownStatus]=useState(false)
   
   const authStatus=useSelector((state:{authStatus:boolean})=>state.authStatus)
-  const name=useSelector((state:{name:string})=>state.name)
-  console.log(`Header name ${name}`)
+  const name=useSelector((state:{name:string})=>state.name)||"guest"
+  const profile_pic=useSelector((state:{profile_pic:string|null})=>state.profile_pic)
+
+
+
+
   const navigate=useNavigate()
   const navItems=[
     {
@@ -49,7 +53,7 @@ function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Logo/>
-            <div className='text-xl text-black'>Welcome {localStorage.getItem("name")||"guest"}</div>
+            <div className='text-xl text-black'>Welcome {name}</div>
             <div className="flex items-center space-x-3">
               {
                 navItems.filter(item=>item.isactive).map((item)=>{
@@ -58,10 +62,10 @@ function Header() {
                     className='rounded-full h-10 w-10 text-center text-xl bg-red-500 overflow-hidden border-green-500 border-3 hover:shadow-xl'
                     onClick={()=>navigate(item.topath)}
                     >
-                      {localStorage.getItem("profile_pic")!="null"?
-                      <img src={localStorage.getItem("profile_pic")||""} 
+                      {profile_pic?
+                      <img src={profile_pic} 
                       alt="" 
-                      />:localStorage?.getItem("name")?.charAt(0).toUpperCase()}
+                      />:name.charAt(0).toUpperCase()}
                     </div>
                   }
                   
