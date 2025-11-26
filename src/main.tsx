@@ -18,6 +18,7 @@ import Poll from './components/Poll.tsx'
 import Roomcreation from './pages/Roomcreation.tsx'
 import Notification from './pages/Notification.tsx'
 
+import RoomEdit from './pages/RoomEdit.tsx'
 
 const router=createBrowserRouter([
   {path:"/",element:<App/>,children:[
@@ -29,6 +30,7 @@ const router=createBrowserRouter([
     {path:"/rooms/:id/messages",element:<RoomWrapper />},
     {path:"/polls/:id/",element:<Poll id={2}/>},
     {path:"/notifications",element:<Notification/>},
+    {path:"/rooms/:id/edit",element:<RoomEdit/>},
   ]}
 ])
 

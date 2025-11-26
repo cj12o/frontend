@@ -1,4 +1,3 @@
-import { createReducer } from "@reduxjs/toolkit";
 import Apierror from "../utils/api-error";
 import axios from "axios";
 
@@ -14,20 +13,21 @@ const roomlist=async (need:number,keyword:string)=>{
         let url=import.meta.env.VITE_ROOMLST_EPT+`?need=${need}&keyword=${keyword}`
        
         
-        const resp=await axios.post(url,
-            {headers:{"Content-Type":"application/json",
+        const resp=await axios.post(url, {}, {
+            headers:{"Content-Type":"application/json",
                 // "Authorization":`Token ${localStorage.getItem("cookie")}`
             }}
         )
 
         // console.log(`RESPONSE ${resp.data}`)
         posturl=resp?.data?.next
-        preurl=resp?.data?.next
+        preurl=resp?.data?.previous
         return resp?.data
         
     }catch(e:any){
-        const error=e.response?.message
-        throw new Apierror(409,error)
+        const error = e.response?.data?.ERROR || e.response?.data?.message || e.message || "Failed to fetch rooms"
+        console.error("Room list API error:", error, e.response?.data)
+        throw new Apierror(e.response?.status || 500, error)
     }
     
 }
@@ -38,21 +38,22 @@ const roomlistpost=async (need:number,keyword:string)=>{
 
     try{
         const url=posturl||import.meta.env.VITE_ROOMLST_EPT
-        console.log(`POST UEL:${url}`)
-        const resp=await axios.post(url,
-            {headers:{"Content-Type":"application/json",
+        console.log(`POST URL:${url}`)
+        const resp=await axios.post(url, {}, {
+            headers:{"Content-Type":"application/json",
                 // "Authorization":`Token ${localStorage.getItem("cookie")}`
             }}
         )
 
         // console.log(`RESPONSE ${resp.data}`)
         posturl=resp?.data?.next
-        preurl=resp?.data?.next
+        preurl=resp?.data?.previous
         return resp?.data
 
     }catch(e:any){
-        const error=e.response?.message
-        throw new Apierror(409,error)
+        const error = e.response?.data?.ERROR || e.response?.data?.message || e.message || "Failed to fetch next page"
+        console.error("Room list next page API error:", error, e.response?.data)
+        throw new Apierror(e.response?.status || 500, error)
     }
     
 }
@@ -62,20 +63,21 @@ const roomlistprev=async (need:number,keyword:string)=>{
 
     try{
         const url=preurl||import.meta.env.VITE_ROOMLST_EPT
-        const resp=await axios.post(url,
-            {headers:{"Content-Type":"application/json",
+        const resp=await axios.post(url, {}, {
+            headers:{"Content-Type":"application/json",
                 // "Authorization":`Token ${localStorage.getItem("cookie")}`
             }}
         )
 
         // console.log(`RESPONSE ${resp.data}`)
         posturl=resp?.data?.next
-        preurl=resp?.data?.next
+        preurl=resp?.data?.previous
         return resp?.data
     
     }catch(e:any){
-        const error=e.response?.message
-        throw new Apierror(409,error)
+        const error = e.response?.data?.ERROR || e.response?.data?.message || e.message || "Failed to fetch previous page"
+        console.error("Room list previous page API error:", error, e.response?.data)
+        throw new Apierror(e.response?.status || 500, error)
     }
     
 }

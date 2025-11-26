@@ -42,8 +42,8 @@ function Header() {
       isactive:authStatus
     },
     {
-      name:"notification",
-      topath:`/notifications`,
+      name:"edit form",
+      topath:"/rooms/83/edit",
       isactive:authStatus
     }
   ]

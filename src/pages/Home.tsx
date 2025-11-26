@@ -59,6 +59,8 @@ export default function ChatroomHome() {
   const [rooms,setRooms]=useState<RoomType[]>([])
   const [topics,setTopics]=useState<TopicType[]>([])
   const [aiStatus,setAiStatus]=useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
 
  ///FOR pagination
@@ -70,13 +72,24 @@ export default function ChatroomHome() {
   
   
   const getrooms = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const resp = await roomlist(queryforDynamicSearch?.need,queryforDynamicSearch?.keyword);
-      setRooms(resp?.results); 
-      if(resp?.next) setNextpageStatus(true)
-      if(resp?.previous) setPrevpageStatus(true)
-    } catch (e) {
-      console.log(e);
+      const resp = await roomlist(queryforDynamicSearch?.need || -1, queryforDynamicSearch?.keyword || "");
+      if (resp && resp.results) {
+        setRooms(resp.results); 
+        setNextpageStatus(!!resp.next);
+        setPrevpageStatus(!!resp.previous);
+      } else {
+        setRooms([]);
+        setError("No rooms found");
+      }
+    } catch (e: any) {
+      console.error("Error fetching rooms:", e);
+      setError(e.message || "Failed to load rooms. Please try again.");
+      setRooms([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,56 +97,103 @@ export default function ChatroomHome() {
 
 
   const getroomsNext = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const resp = await roomlistpost(queryforDynamicSearch?.need,queryforDynamicSearch?.keyword);
-      setRooms(resp?.results); 
-      if(resp?.next) setNextpageStatus(true)
-      if(resp?.previous) setPrevpageStatus(true)
-    } catch (e) {
-      console.log(e);
+      const resp = await roomlistpost(queryforDynamicSearch?.need || -1, queryforDynamicSearch?.keyword || "");
+      if (resp && resp.results) {
+        setRooms(resp.results); 
+        setNextpageStatus(!!resp.next);
+        setPrevpageStatus(!!resp.previous);
+      } else {
+        setRooms([]);
+        setError("No more rooms available");
+      }
+    } catch (e: any) {
+      console.error("Error fetching next page:", e);
+      setError(e.message || "Failed to load next page.");
+    } finally {
+      setLoading(false);
     }
   };
 
 
 
   const getroomsPrev = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const resp =await roomlistprev(queryforDynamicSearch?.need,queryforDynamicSearch?.keyword);
-      setRooms(resp?.results); 
-      if(resp?.next) setNextpageStatus(true)
-      if(resp?.previous) setPrevpageStatus(true)
-    } catch (e) {
-      console.log(e);
+      const resp = await roomlistprev(queryforDynamicSearch?.need || -1, queryforDynamicSearch?.keyword || "");
+      if (resp && resp.results) {
+        setRooms(resp.results); 
+        setNextpageStatus(!!resp.next);
+        setPrevpageStatus(!!resp.previous);
+      } else {
+        setRooms([]);
+        setError("No previous rooms available");
+      }
+    } catch (e: any) {
+      console.error("Error fetching previous page:", e);
+      setError(e.message || "Failed to load previous page.");
+    } finally {
+      setLoading(false);
     }
   };
   
   const getRecom = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const resp:{rooms:RoomType[]} = await getRecommendations();
-      setRooms(resp?.rooms); 
-    } catch (e) {
-      console.log(e);
+      if (resp && resp.rooms) {
+        setRooms(resp.rooms); 
+      } else {
+        setRooms([]);
+        setError("No recommendations available");
+      }
+    } catch (e: any) {
+      console.error("Error fetching recommendations:", e);
+      setError(e.message || "Failed to load recommendations.");
+      setRooms([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   const get_topics = async () => {
     try {
-      const resp= await getTopics()
-      setTopics(resp); 
-    } catch (e) {
-      console.log(e);
+      const resp = await getTopics();
+      if (resp && Array.isArray(resp)) {
+        setTopics(resp); 
+      } else {
+        setTopics([]);
+      }
+    } catch (e: any) {
+      console.error("Error fetching topics:", e);
+      setTopics([]);
     }
   };
   
 
   const topicWiseRoom=async(topic:string)=>{
     //for parent topic
+    setLoading(true);
+    setError(null);
     try{
-      const resp=await roomlist(0,topic)
-      setRooms(resp?.results)
-      setSelectedTopic(topic)
-    }catch(e){
-
+      const resp = await roomlist(2, topic);
+      if (resp && resp.results) {
+        setRooms(resp.results);
+        setSelectedTopic(topic);
+      } else {
+        setRooms([]);
+        setError(`No rooms found for topic: ${topic}`);
+      }
+    }catch(e: any){
+      console.error("Error fetching topic rooms:", e);
+      setError(e.message || `Failed to load rooms for topic: ${topic}`);
+      setRooms([]);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -306,7 +366,33 @@ export default function ChatroomHome() {
                 setAiStatus(true)}
                 }></Button>  
             </div>
+            
+            {/* Error Message */}
+            {error && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <p className="text-red-800">{error}</p>
+                  <button
+                    onClick={() => setError(null)}
+                    className="text-red-600 hover:text-red-800 font-bold"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {loading && (
+              <div className="flex items-center justify-center py-12">
+                <div className="h-10 w-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="ml-3 text-gray-600">Loading rooms...</span>
+              </div>
+            )}
+
             <div className="space-y-4">
+              {!loading && (
+                <>
               {
                 rooms.length>0?(
                 rooms.map((room) => (
@@ -369,11 +455,12 @@ export default function ChatroomHome() {
                         </span>
                         <span className="flex items-center space-x-1">
                           <Tags className="w-4 h-4" />
-                          {
-                            room.tags && room.tags.map((t)=>{
+                          {/* {
+                            room.tags.length>0 && room.tags.map((t)=>{
                               return <span className='bg-red-200 p-1 rounded'>{t}</span>
                             })
-                          }
+                          } */}
+                        <span className='bg-red-200 p-1 rounded'>{room.tags.length}</span>
                         </span>
                       </div>
                     </div>
@@ -383,7 +470,7 @@ export default function ChatroomHome() {
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     {
                       room.is_private?(
-                      <button className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-md transition opacity-0 opacity-100">
+                      <button className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-md transition">
                         Request to Join
                       </button>
                       ):(
@@ -428,6 +515,8 @@ export default function ChatroomHome() {
                   onClick={getroomsNext}>Next</button>:null
                 }
               </div>
+              </>
+              )}
             </div>
           </div>
         </div>
