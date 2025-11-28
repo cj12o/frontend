@@ -6,16 +6,14 @@ let preurl:string|null=null
 
 
 const roomlist=async (need:number,keyword:string)=>{
-    // console.log(`ROOM LST COOKIE SENT ${localStorage.getItem("cookie")}`)
     try{
-        
-
         let url=import.meta.env.VITE_ROOMLST_EPT+`?need=${need}&keyword=${keyword}`
        
-        
+        const cookie=`Token ${localStorage.getItem("cookie")}`?localStorage.getItem("cookie"):""
+
         const resp=await axios.post(url, {}, {
             headers:{"Content-Type":"application/json",
-                // "Authorization":`Token ${localStorage.getItem("cookie")}`
+                "Authorization":cookie
             }}
         )
 
@@ -38,10 +36,12 @@ const roomlistpost=async (need:number,keyword:string)=>{
 
     try{
         const url=posturl||import.meta.env.VITE_ROOMLST_EPT
-        console.log(`POST URL:${url}`)
+
+        const cookie=`Token ${localStorage.getItem("cookie")}`?localStorage.getItem("cookie"):""   
+
         const resp=await axios.post(url, {}, {
             headers:{"Content-Type":"application/json",
-                // "Authorization":`Token ${localStorage.getItem("cookie")}`
+                "Authorization":cookie
             }}
         )
 
@@ -63,9 +63,12 @@ const roomlistprev=async (need:number,keyword:string)=>{
 
     try{
         const url=preurl||import.meta.env.VITE_ROOMLST_EPT
+        
+        const cookie=`Token ${localStorage.getItem("cookie")}`?localStorage.getItem("cookie"):""
+
         const resp=await axios.post(url, {}, {
             headers:{"Content-Type":"application/json",
-                // "Authorization":`Token ${localStorage.getItem("cookie")}`
+                "Authorization":cookie
             }}
         )
 

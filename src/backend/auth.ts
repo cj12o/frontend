@@ -63,15 +63,20 @@ const signup=async (username:string,email:string,password:string)=>{
     }
 }
 
-const logout=async (dispatch:Dispatch<any>)=>{
+const logout=async (dispatch:Dispatch<any>,visited_rooms:object)=>{
     try{
-        const resp=axios.get(import.meta.env.VITE_LOGOUT_EPT,
-            {headers:{
+        const data={
+            visited_rooms:visited_rooms,
+            sessionId:localStorage.getItem("sessionId")
+        }
+        const resp=await axios.post(import.meta.env.VITE_LOGOUT_EPT
+            ,data
+            ,{headers:{
                 'Authorization': `Token ${localStorage.getItem('cookie')}`
             }})
-            console.log(`Cookie:${localStorage.getItem('cookie')}`)
+        if(resp.status==200){
             dispatch(reducerLogout())
-
+        }
     }
     catch(e:any){
         const error=e.response?.data?.message||"unknown error"

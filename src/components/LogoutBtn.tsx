@@ -4,8 +4,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { logout  as reducerLogout} from '../store/authSlice.js'
 import { useNavigate } from 'react-router-dom'
 import { logout as logoutBackend } from '../backend/auth.js'
-import { sendHist } from '@/backend/hist.js'
-import { SaveRecommendation } from '@/backend/recommendation.js'
 
 
 function LogoutBtn() {
@@ -24,13 +22,9 @@ function LogoutBtn() {
 
     const logoutHandler=async ()=>{
       try{
-        
-        await sendHist(visitedRoomsRef.current)
-        await SaveRecommendation()
-
-        const resp=await logoutBackend(dispatch)
+        const resp=await logoutBackend(dispatch,visitedRoomsRef)
         console.log("Suggesfully logged out")
-        navigate("/login")
+        navigate("/")
         
       }catch(e:any){
         setError(e.message)

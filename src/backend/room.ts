@@ -23,7 +23,7 @@ const createRoom=async(room_name:string,room_description:string,room_topic:strin
             description:room_description,
             topic:room_topic,
             is_private:is_private,
-            tags:{tags:tagsss},
+            tags:tagsss,
             moderator:moderator_list
         }
 
