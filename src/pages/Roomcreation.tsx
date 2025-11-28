@@ -3,6 +3,7 @@ import axios from "axios";
 import { Plus, X, Lock, Globe, Tag, Sparkles } from "lucide-react";
 import Search from "@/components/Search";
 import { createRoom } from "@/backend/room";
+import type { Moderator } from "@/types/Room.types";
 
 export default function CreateRoom() {
   const [roomName, setRoomName] = useState("");
@@ -17,7 +18,7 @@ export default function CreateRoom() {
   const [loading, setLoading] = useState(false);
 
   //todo: mods
-  const [moderator, setModerator] = useState<string[]>([]);
+  const [moderator, setModerator] = useState<Moderator[]>([]);
 
   //todo
 
@@ -35,7 +36,7 @@ export default function CreateRoom() {
       topic,
       privateStatus,
       tags,
-      moderator
+      moderator.map((mod)=>mod.id)
     );
     if (resp === 200) {
       setLoading(false);

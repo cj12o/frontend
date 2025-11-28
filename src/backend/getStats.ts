@@ -99,6 +99,16 @@ const getStatsPrev=async()=>{
     }
 }
 
-
-export {getStats,getStatsNext,getStatsPrev}
+const getHomePageStats=async()=>{
+    try{
+        const resp=await axios.get(import.meta.env.VITE_BASE_EPT+`stats/`)
+        return resp.data
+    }catch(e){
+        return {
+            data:"error",
+            status:400
+        }
+    }
+}   
+export {getStats,getStatsNext,getStatsPrev,getHomePageStats}
 

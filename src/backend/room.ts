@@ -16,7 +16,7 @@ const getRoomdetail=async(room_id:number)=>{
     }
 }
 
-const createRoom=async(room_name:string,room_description:string,room_topic:string,is_private:boolean,tagsss:string [],moderator_list:string[])=>{
+const createRoom=async(room_name:string,room_description:string,room_topic:string,is_private:boolean,tagsss:string [],moderator_list:number[])=>{
     try{
         const data={   
             name:room_name,

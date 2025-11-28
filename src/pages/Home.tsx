@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
-import {MessageSquare,Plus,Search,Users,TrendingUp,Hash,Clock,User,Tags} from "lucide-react";
+import {
+  MessageSquare,
+  Plus,
+  Search,
+  Users,
+  TrendingUp,
+  Hash,
+  Clock,
+  User,
+  Tags,
+} from "lucide-react";
 import { roomlist, roomlistpost, roomlistprev } from "../backend/room_list.ts";
 import { Link, useLocation } from "react-router-dom";
 import { addtoHistory } from "@/store/authSlice.ts";
@@ -9,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/index.ts";
 import { getRecommendations } from "@/backend/recommendation.ts";
 import { delMember, addMember } from "@/backend/member.ts";
+import { getHomePageStats } from "@/backend/getStats.ts";
 import Searchbar from "@/components/HomePage/Searchbar.tsx";
 export default function ChatroomHome() {
   type author = {
@@ -27,6 +38,7 @@ export default function ChatroomHome() {
     id: string;
     author: author;
     parent_topic: string;
+    isMember: boolean;
     members: member[];
     moderator: moderator[];
     name: string;
@@ -37,21 +49,26 @@ export default function ChatroomHome() {
     created_at: string;
     updated_at: string;
     tags: string[];
-    isMember: boolean;
   };
   type TopicType = {
     id: number;
     topic: string;
     relatedRooms: number;
   };
-  type MemeberStatus = {
-    room_id: number;
-    status: boolean;
-  };
+  // type MemeberStatus = {
+  //   room_id: number;
+  //   status: boolean;
+  // };
 
   type dataForDynamicQuery = {
     need: number;
     keyword: string;
+  };
+  type HomePageStats = {
+    room_count: number;
+    online_users_count: number;
+    message_count: number;
+    total_users_count: number;
   };
   const authStatus = useSelector((state: any) => state.authStatus);
   const [queryforDynamicSearch, setQueryforDynamicSearch] =
@@ -62,11 +79,11 @@ export default function ChatroomHome() {
   const [aiStatus, setAiStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const [homePageStats, setHomePageStats] = useState<HomePageStats>();
   ///FOR pagination
   const [nextpageStatus, setNextpageStatus] = useState(false);
   const [prevpageStatus, setPrevpageStatus] = useState(false);
-  const [memberStatus, setMemberStatus] = useState<MemeberStatus[]>([]);
+  // const [memberStatus, setMemberStatus] = useState<MemeberStatus[]>([]);
   const navigate = useNavigate();
 
   const getrooms = async () => {
@@ -205,6 +222,7 @@ export default function ChatroomHome() {
 
   const location = useLocation();
   const extraclass = "bg-white";
+
   useEffect(() => {
     if (aiStatus == false) {
       getrooms();
@@ -215,6 +233,10 @@ export default function ChatroomHome() {
     console.log(`Rooms=>${rooms}`);
   }, [aiStatus]);
 
+  useEffect(() => {
+    getHomePageStats().then((data) => setHomePageStats(data));
+    getrooms();
+  }, []);
   const unsubscribe = (room_id: number) => {
     delMember(room_id);
     getrooms();
@@ -223,6 +245,7 @@ export default function ChatroomHome() {
     addMember(room_id);
     getrooms();
   };
+
   //for search bar
   useEffect(() => {
     getrooms();
@@ -255,7 +278,7 @@ export default function ChatroomHome() {
               <div>
                 <p className="text-gray-600 text-sm mb-1">Active Rooms</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  {rooms.length}
+                  {homePageStats?.room_count}
                 </p>
               </div>
               <div className="bg-indigo-100 p-3 rounded-lg">
@@ -268,7 +291,10 @@ export default function ChatroomHome() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm mb-1">Online Users</p>
-                <p className="text-3xl font-bold text-gray-900">342</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {homePageStats?.online_users_count}/
+                  {homePageStats?.total_users_count}
+                </p>
               </div>
               <div className="bg-green-100 p-3 rounded-lg">
                 <Users className="w-6 h-6 text-green-600" />
@@ -280,7 +306,9 @@ export default function ChatroomHome() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm mb-1">Messages Today</p>
-                <p className="text-3xl font-bold text-gray-900">8.2K</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {homePageStats?.message_count}
+                </p>
               </div>
               <div className="bg-purple-100 p-3 rounded-lg">
                 <TrendingUp className="w-6 h-6 text-purple-600" />
@@ -317,7 +345,7 @@ export default function ChatroomHome() {
                             : "text-gray-500"
                         }`}
                       >
-                        {rooms.length}
+                        {homePageStats?.room_count}
                       </span>
                     </div>
                   </button>
@@ -504,30 +532,34 @@ export default function ChatroomHome() {
                               Request to Join
                             </button>
                           ) : (
-                            <button
-                              className={`px-5 py-2 text-sm font-medium rounded-lg transition shadow-sm ${
-                                room.isMember
-                                  ? "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-red-600 hover:border-red-200"
-                                  : "bg-indigo-600 text-white hover:bg-indigo-700"
-                              }`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setRooms((prevRooms) =>
-                                  prevRooms.map((r) =>
-                                    r.id === room.id
-                                      ? { ...r, isMember: !r.isMember }
-                                      : r
-                                  )
-                                );
-                                if (room.isMember) {
-                                  unsubscribe(Number(room.id));
-                                } else {
-                                  subscribe(Number(room.id));
-                                }
-                              }}
-                            >
-                              {room.isMember ? "Leave Room" : "Join Room"}
-                            </button>
+                            <>
+                              {console.log(
+                                `Room: ${room.name}, isMember:`,
+                                room.isMember,
+                                typeof room.isMember
+                              )}
+                              {room.isMember === true ? (
+                                <button
+                                  className="px-5 py-2 text-sm font-medium rounded-lg transition shadow-sm bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-red-600 hover:border-red-200"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    unsubscribe(Number(room.id));
+                                  }}
+                                >
+                                  Leave Room
+                                </button>
+                              ) : (
+                                <button
+                                  className="px-5 py-2 text-sm font-medium rounded-lg transition shadow-sm bg-indigo-600 text-white hover:bg-indigo-700"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    subscribe(Number(room.id));
+                                  }}
+                                >
+                                  Join Room
+                                </button>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>

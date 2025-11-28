@@ -5,11 +5,15 @@ let posturl:string|null=null
 let preurl:string|null=null
 
 
-const roomlist=async (need:number,keyword:string)=>{
+const roomlist=async (need:number=-1,keyword:string="")=>{
     try{
         let url=import.meta.env.VITE_ROOMLST_EPT+`?need=${need}&keyword=${keyword}`
        
-        const cookie=`Token ${localStorage.getItem("cookie")}`?localStorage.getItem("cookie"):""
+        let cookie=localStorage.getItem("cookie")||""
+        if(cookie!=="null" && cookie!=="undefined" && cookie!==""){
+            cookie=`Token ${cookie}`
+        }
+        else cookie=""
 
         const resp=await axios.post(url, {}, {
             headers:{"Content-Type":"application/json",
