@@ -32,15 +32,16 @@ const PollComp = React.memo(({ id }: { id: number }) => {
 
 function Message() {
   type Comment = {
-    id: number;
-    author: string;
-    message: string;
-    images_msg: string;
-    file_msg: string;
-    upvotes: number;
-    downvotes: number;
-    children: Comment[];
-    hasPoll: boolean;
+    id: number
+    author: string
+    message: string
+    images_msg: string
+    file_msg: string
+    upvotes: number
+    downvotes: number
+    children: Comment[]
+    hasPoll: boolean
+    is_unsafe:boolean
   };
   type Vote = {
     message_id: number;
@@ -117,6 +118,7 @@ function Message() {
             upvotes: 0,
             downvotes: 0,
             hasPoll: false,
+            is_unsafe:false
           },
         ]);
       }
@@ -182,6 +184,7 @@ function Message() {
           upvotes: 0,
           downvotes: 0,
           hasPoll: true,
+          is_unsafe:false
         },
       ]);
     }
@@ -264,6 +267,7 @@ function Message() {
               upvotes: 0,
               downvotes: 0,
               hasPoll: false,
+              is_unsafe:false
             },
           ],
         };

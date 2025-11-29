@@ -79,7 +79,7 @@ function Header() {
     { name: "login", topath: "/login", isactive: !authStatus },
     { name: "signup", topath: "/signup", isactive: !authStatus },
     { name: "profile", topath: `/profile/${name}`, isactive: authStatus },
-    { name: "edit form", topath: "/rooms/83/edit", isactive: authStatus },
+    { name: "moderation", topath: "/moderator", isactive: authStatus },
   ];
 
   return (

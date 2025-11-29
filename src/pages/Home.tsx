@@ -533,11 +533,6 @@ export default function ChatroomHome() {
                             </button>
                           ) : (
                             <>
-                              {console.log(
-                                `Room: ${room.name}, isMember:`,
-                                room.isMember,
-                                typeof room.isMember
-                              )}
                               {room.isMember === true ? (
                                 <button
                                   className="px-5 py-2 text-sm font-medium rounded-lg transition shadow-sm bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-red-600 hover:border-red-200"

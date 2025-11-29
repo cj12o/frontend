@@ -2,7 +2,7 @@ import Apierror from "../utils/api-error";
 import axios from "axios";
 
 let posturl:string|null=null
-let preurl:string|null=null
+let preurl:string|null=null 
 
 
 const roomlist=async (need:number=-1,keyword:string="")=>{
