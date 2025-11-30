@@ -1,4 +1,4 @@
-
+//todo if in create form no votes
 
 import React, { useEffect, useState, useRef } from "react";
 import type { Moderator } from "@/types/moderator";
@@ -16,23 +16,11 @@ type SearchProps = {
 
 const FALLBACK_MODS: Moderator[] = [
   {
-    id: 1,
+    id:Number(localStorage.getItem("id")),
     username: localStorage.getItem("name") || "you",
     msg_count: 0,
     vote_count: 0,
-  },
-  {
-    id: 2,
-    username: "auto mod",
-    msg_count: 0,
-    vote_count: 0,
-  },
-  {
-    id: 3,
-    username: "semi auto mod",
-    msg_count: 0,
-    vote_count: 0,
-  },
+  }
 ];
 
 const Search = ({ value }: SearchProps) => {
@@ -42,8 +30,7 @@ const Search = ({ value }: SearchProps) => {
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const pagination_limit = 5;
-  const [availableModerators, setAvailableModerators] =
-    useState<Moderator[]>(FALLBACK_MODS);
+  const [availableModerators, setAvailableModerators]=useState<Moderator[]>(FALLBACK_MODS);
 
   const { moderator, setModerator, flag, room_id } = value;
 

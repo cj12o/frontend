@@ -15,7 +15,7 @@ const NotificationList: React.FC = () => {
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
+    
     // WebSocket Configuration
     // Note: In a real app, manage this token securely.
     const socketUrl = `ws://127.0.0.1:8000/ws/notify/?token=${localStorage.getItem("cookie") || ""}`;

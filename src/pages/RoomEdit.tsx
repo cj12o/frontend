@@ -1,232 +1,3 @@
-// import { useEffect, useState } from "react";
-// import Search from "@/components/Search";
-// import type { Moderator } from "@/types/moderator";
-// import {updateRoom} from "@/backend/room";
-// import { useParams } from "react-router-dom";
-// import { getRoomdetail } from "@/backend/room";
-
-// const RoomEdit = () => {
-//   const[roomName,setRoomName]=useState("")
-//   const[roomDescription,setRoomDescription]=useState("")
-//   const[tags,setTags]=useState<string []>([])
-//   const [tag,setTag]=useState("")
-//   const [topic,setTopic]=useState("")
-//   const [privateStatus,setPrivateStatus]=useState(false)
-
-//   const [error,setError]=useState("")
-
-//   const[loading,setLoading]=useState(false)
-
-//   //todo: mods
-//   const [moderator, setModerator] = useState<Moderator[]>([]);
-
-//   //todo
-//   const {id}=useParams()
-
-//   // const loadData=()=>{
-//   //   try{
-//   //     const mockModerators: Moderator[] = [
-//   //       {
-//   //         msg_count: 4,
-//   //         vote_count: 0,
-//   //         username: "ALEX_123",
-//   //         id: 4,
-//   //       },
-//   //       {
-//   //         msg_count: 0,
-//   //         vote_count: 0,
-//   //         username: "chitransh",
-//   //         id: 1,
-//   //       },
-//   //       {
-//   //         msg_count: 12,
-//   //         vote_count: 5,
-//   //         username: "PriyaMod",
-//   //         id: 7,
-//   //       },
-//   //       {
-//   //         msg_count: 9,
-//   //         vote_count: 2,
-//   //         username: "AutoGuardian",
-//   //         id: 9,
-//   //       },
-//   //     ]
-//   //     setRoomName("test 1")
-//   //     setTags(["git","tensorflow","api"])
-//   //     setTopic("Technology")
-//   //     setRoomDescription("A space dedicated to cloud under technology. Members discuss and share ideas about Git, TensorFlow, API and related trends.")
-//   //     setAvailableModerators(mockModerators)
-//   //     setModerator(mockModerators.slice(0,2))
-//   //     setPrivateStatus(true)
-//   //   }catch(e){
-
-//   //   }
-
-//   // }
-
-//   const loadData=async()=>{
-//     try{
-//       const resp=await getRoomdetail(Number(id))
-//       setRoomName(resp.name)
-//       resp.tags.length>0?setTags(resp.tags):setTags([])
-//       setTopic(resp.parent_topic)
-//       setRoomDescription(resp.description)
-//       setModerator(resp.moderator)
-//       setPrivateStatus(resp.is_private)
-
-//     }catch(e:any){
-//       setError(e)
-//     }
-//   }
-//   useEffect(()=>{
-//     loadData()
-//   },[])
-
-//   const submitHandler=async()=>{
-//     setLoading(true)
-//     const privateStataus_val=privateStatus?1:0
-
-//     const mod_id:number[]=[]
-//     moderator.map((mod)=>{
-//       mod_id.push(mod.id)
-//     })
-
-//     const resp=await updateRoom(Number(id),roomName,roomDescription,topic,privateStataus_val,tags,mod_id)
-//     if(resp===200){
-//       setLoading(false)
-//       alert("Room updated successfully")
-//     }
-//     else{
-//       setLoading(false)
-//       setError("Room updation failed")
-//     }
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-white text-gray-900 p-8">
-//     {loading && (
-//       <div className="fixed inset-0 bg-white bg-opacity-40 flex justify-center items-center">
-//         <div className="h-10 w-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-//       </div>
-//     )}
-
-//     {
-//       error.length>0?<p className="text-red-600">{error}</p>:null
-//     }
-//       <h1 className="text-2xl font-semibold mb-4">Create Room</h1>
-
-//       <div className="space-y-4 max-w-sm">
-//         <div>
-//           <input
-//             type="text"
-//             placeholder="Room name"
-//             className="border border-gray-300 px-3 py-2 w-full"
-//             value={roomName}
-//             onChange={(e) => setRoomName(e.target.value)}
-//           />
-//         </div>
-
-//         <div>
-//           <input
-//             type="text"
-//             placeholder="Room Topic"
-//             className="border border-gray-300 px-3 py-2 w-full"
-//             value={topic}
-//             onChange={(e) => setTopic(e.target.value)}
-//           />
-//         </div>
-
-//         <div>
-//           <input
-//             type="text"
-//             placeholder="Description"
-//             className="border border-gray-300 px-3 py-2 w-full"
-//             value={roomDescription}
-//             onChange={(e) => setRoomDescription(e.target.value)}
-//           />
-//         </div>
-//         <div className="flex ">
-//           <label htmlFor="checkbox" className="mr-5">Private</label>
-//           <input type="checkbox" name="checkbox" id=""
-//           checked={privateStatus}
-//           onChange={()=>setPrivateStatus((prev)=>!prev)}/>
-//         </div>
-//         <div >
-//           <input
-//             type="text"
-//             placeholder="tags"
-//             className="border border-gray-300 px-3 py-2 w-full"
-//             value={tag}
-//             onKeyDown={(e) =>{
-//                 if(e.code==="Enter"){
-//                     if(tag!=""){
-//                         if(tags.find((tagg)=>tagg===tag)){
-//                             setError("Already chosen tag")
-//                             return
-//                         }
-//                         setTags((prev)=>[...prev,tag])
-//                     }
-//                     setTag("")
-//                 }
-
-//             }}
-//             onChange={(e)=>{
-//                 setTag(e.target.value)
-//             }}
-//           />
-//         </div>
-//         <div className="flex flex-wrap gap-2 max-w-full">
-//             {tags.length > 0
-//                 ? tags.map((tag: string, i) => {
-//                     if (tag !== "") {
-//                     return (
-//                         <div
-//                         key={i}
-//                         className="group flex items-center bg-red-200 rounded-3xl px-2 py-1 mt-2"
-//                         >
-//                         <span className="mr-1">{tag}</span>
-//                         <button
-//                             onClick={() =>
-//                             setTags((prev) => prev.filter((ele) => ele !== tag))
-//                             }
-//                             className="hidden group-hover:inline text-sm ml-1 bg-red-400 rounded-full"
-//                         >
-//                             ⛔
-//                         </button>
-//                         </div>
-//                     );
-//                     }
-//                     return null;
-//                 })
-//             : null}
-//         </div>
-//         <div>
-//           <Search value={{setModerator:setModerator,moderator:moderator,flag:1,room_id:Number(id)}}/>
-//         </div>
-
-//         <button
-//           onClick={submitHandler}
-//           className="bg-blue-600 text-white px-4 py-2"
-//         >
-//           Update
-//         </button>
-//         <button
-//         onClick={()=>{
-//           setRoomName("")
-//           setTags([])
-//           setTopic("")
-//           setRoomDescription("")
-//           setModerator([])
-//           setPrivateStatus(false)
-//         }}>
-//           Clear
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default RoomEdit
 import { useEffect, useState } from "react";
 import Search from "@/components/Search";
 import type { Moderator } from "@/types/moderator";
@@ -247,6 +18,7 @@ const RoomEdit = () => {
   const [loading, setLoading] = useState(false);
 
   const [moderator, setModerator] = useState<Moderator[]>([]);
+  const [ModerationType,setModerationType] = useState(0);
   const { id } = useParams();
 
   const loadData = async () => {
@@ -258,6 +30,7 @@ const RoomEdit = () => {
       setRoomDescription(resp.description);
       setModerator(resp.moderator);
       setPrivateStatus(resp.is_private);
+      setModerationType(resp.moderation_type)
     } catch (e: any) {
       setError(e);
     }
@@ -276,6 +49,13 @@ const RoomEdit = () => {
       mod_id.push(mod.id);
     });
 
+    let val_for_mod=mod_id
+    if(ModerationType==-1){
+      val_for_mod.splice(0, 0, -1);
+    }
+    else if(ModerationType==-2){
+      val_for_mod=[-2]
+    }
     const resp = await updateRoom(
       Number(id),
       roomName,
@@ -283,7 +63,8 @@ const RoomEdit = () => {
       topic,
       privateStataus_val,
       tags,
-      mod_id
+      // mod_id
+      val_for_mod
     );
 
     if (resp === 200) {
@@ -372,7 +153,39 @@ const RoomEdit = () => {
               onChange={(e) => setRoomDescription(e.target.value)}
             />
           </div>
-
+          {/* Moderation Type */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Moderation Type
+            </label>
+            <div className="flex p-1 bg-gray-100/50 border border-gray-200 rounded-xl gap-1">
+              {[
+                { label: "Manual", value: 0 },
+                { label: "Semi-Auto", value: -1 },
+                { label: "Auto", value: -2 },
+              ].map((type) => (
+                <button
+                  key={type.value}
+                  type="button"
+                  onClick={() => setModerationType(type.value)}
+                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                    ModerationType === type.value
+                      ? "bg-white text-indigo-600 shadow-sm border border-gray-100"
+                      : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+                  }`}
+                >
+                  {type.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              {ModerationType === -2
+                ? "ML model detects messages that violate guidelines and removes them automatically."
+                : ModerationType === -1
+                ? "ML model detects messages that violate guidelines and flags them for human verification, reducing load on moderators."
+                : "All moderation is done manually by human moderators."}
+            </p>
+          </div>
           {/* Private Toggle */}
           <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-indigo-50/30 rounded-xl border border-gray-200">
             <div className="flex items-center gap-3">
@@ -452,19 +265,21 @@ const RoomEdit = () => {
           </div>
 
           {/* Moderator Search */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Moderators
-            </label>
-            <Search
-              value={{
-                setModerator: setModerator,
-                moderator: moderator,
-                flag: 1,
-                room_id: Number(id),
-              }}
-            />
-          </div>
+          {(ModerationType === 0 || ModerationType === -1) && (
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Moderators
+              </label>
+              <Search
+                value={{
+                  setModerator: setModerator,
+                  moderator: moderator,
+                  flag: 1,
+                  room_id: Number(id),
+                }}
+              />
+            </div>
+          )}
 
           {/* Buttons */}
           <div className="flex gap-3 pt-2">
@@ -484,6 +299,7 @@ const RoomEdit = () => {
                 setRoomDescription("");
                 setModerator([]);
                 setPrivateStatus(false);
+                setModerationType(0);
               }}
               className="px-6 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold shadow-sm transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
             >

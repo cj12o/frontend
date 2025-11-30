@@ -16,7 +16,8 @@ const authSlice=createSlice({
         visitedRoomId:[] as History [],
         sessionId:localStorage.getItem("sessionId")||null,
         name:localStorage.getItem("name")||"",
-        profile_pic:localStorage.getItem("profile_pic")||null
+        profile_pic:localStorage.getItem("profile_pic")||null,
+        id:localStorage.getItem("id")||null
 
     },
     reducers:{
@@ -27,6 +28,8 @@ const authSlice=createSlice({
             state.cookie=action.payload.cookie
             state.sessionId=seshid
             state.name=action.payload.name
+            state.profile_pic=action.payload.profile_pic
+            state.id=action.payload.id  
         
             //local storage
             localStorage.setItem("cookie",action.payload.cookie)
@@ -34,6 +37,7 @@ const authSlice=createSlice({
             localStorage.setItem("sessionId",seshid)
             localStorage.setItem("name",action.payload.name)
             localStorage.setItem("profile_pic",action.payload.profile_pic)
+            localStorage.setItem("id",action.payload.id)    
         },
         logout:(state)=>{
             
@@ -43,6 +47,7 @@ const authSlice=createSlice({
             localStorage.removeItem("name")
             localStorage.removeItem("profile_pic")
             localStorage.removeItem("visitedRoomId")
+            localStorage.removeItem("id")
 
             // state.visitedRoomId=[]
             state.authStatus=false
@@ -51,6 +56,7 @@ const authSlice=createSlice({
             state.name=""
             state.profile_pic=null
             state.visitedRoomId=[]
+            state.id=null
         },
         setName:(state,action)=>{
             state.name=action.payload

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const postMsg=async (roomid:number,message:string,file:File|null,image:File|null)=>{
+const postMsg=async (roomid:number,message:string="",file:File|null,image:File|null)=>{
     try{
         const data=new FormData()
         data.append("message",message)
