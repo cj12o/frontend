@@ -18,6 +18,7 @@ import {
 import { getProfile, updateProfile } from "@/backend/profile.ts";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { setProfile } from "@/store/authSlice";
 
 export default function UserProfile() {
   type UserData = {
@@ -80,6 +81,12 @@ export default function UserProfile() {
       setUpdatedBio(resp.userdata[0].bio);
       setUpdatedEmail(resp.email);
       setUpdatedUsername(resp.name);
+
+      // Only update Redux store if viewing own profile
+      const loggedInUsername = localStorage.getItem("name") || "";
+      if (resp.name === loggedInUsername) {
+        dispatch(setProfile(resp.userdata[0].profile_pic));
+      }
     } catch (e) {
       console.log("Profile error:", e);
     } finally {

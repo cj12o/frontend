@@ -26,22 +26,25 @@ const ExpandedContext = createContext<{
   toggleExpand: (id: number) => void;
 } | null>(null);
 
-const PollComp = React.memo(({ id }: { id: number }) => {
-  return <PollComponents id={id} />;
-});
+const PollComp = React.memo(
+  ({ id, room_id }: { id: number; room_id: number }) => {
+    return <PollComponents id={id} room_id={room_id} />;
+  }
+);
 
 function Message() {
   type Comment = {
-    id: number
-    author: string
-    message: string
-    images_msg: string
-    file_msg: string
-    upvotes: number
-    downvotes: number
-    children: Comment[]
-    hasPoll: boolean
-    is_unsafe:boolean
+    id: number;
+    author: string;
+    profile_pic?: string;
+    message: string;
+    images_msg: string;
+    file_msg: string;
+    upvotes: number;
+    downvotes: number;
+    children: Comment[];
+    hasPoll: boolean;
+    is_unsafe: boolean;
   };
   type Vote = {
     message_id: number;
@@ -118,7 +121,7 @@ function Message() {
             upvotes: 0,
             downvotes: 0,
             hasPoll: false,
-            is_unsafe:false
+            is_unsafe: false,
           },
         ]);
       }
@@ -184,7 +187,7 @@ function Message() {
           upvotes: 0,
           downvotes: 0,
           hasPoll: true,
-          is_unsafe:false
+          is_unsafe: false,
         },
       ]);
     }
@@ -267,7 +270,7 @@ function Message() {
               upvotes: 0,
               downvotes: 0,
               hasPoll: false,
-              is_unsafe:false
+              is_unsafe: false,
             },
           ],
         };
@@ -302,30 +305,30 @@ function Message() {
         <>
           {comment.hasPoll ? (
             <div className="mt-4">
-              <PollComp id={Number(comment.id)} />
+              <PollComp id={Number(comment.id)} room_id={Number(id)} />
             </div>
           ) : (
-            <div className="group bg-white rounded-2xl mb-2 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
-              <div className="flex items-start p-3 gap-3">
+            <div className="group bg-white rounded-lg mb-1.5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+              <div className="flex items-start p-2 gap-2">
                 {/* Votes section */}
-                <div className="flex flex-col items-center gap-1 bg-gray-50 rounded-xl p-1 min-w-[40px]">
+                <div className="flex flex-col items-center gap-0.5 bg-gray-50 rounded-lg p-0.5 min-w-[32px]">
                   <button
                     onClick={() => {
                       isUpvoted
                         ? handleVote(comment.id, "upvote", "subtractVote")
                         : handleVote(comment.id, "upvote", "addVote");
                     }}
-                    className={`p-1 rounded-lg transition-all duration-200 ${
+                    className={`p-0.5 rounded transition-all duration-200 ${
                       isUpvoted
                         ? "text-orange-500 bg-orange-50"
                         : "text-gray-400 hover:text-gray-600 hover:bg-gray-200"
                     }`}
                   >
-                    <ChevronUp className="w-4 h-4" strokeWidth={2.5} />
+                    <ChevronUp className="w-3 h-3" strokeWidth={2.5} />
                   </button>
 
                   <span
-                    className={`text-xs font-bold ${
+                    className={`text-[10px] font-bold ${
                       isUpvoted
                         ? "text-orange-500"
                         : isDownvoted
@@ -342,25 +345,43 @@ function Message() {
                         ? handleVote(comment.id, "downvote", "subtractVote")
                         : handleVote(comment.id, "downvote", "addVote");
                     }}
-                    className={`p-1 rounded-lg transition-all duration-200 ${
+                    className={`p-0.5 rounded transition-all duration-200 ${
                       isDownvoted
                         ? "text-indigo-500 bg-indigo-50"
                         : "text-gray-400 hover:text-gray-600 hover:bg-gray-200"
                     }`}
                   >
-                    <ChevronDown className="w-4 h-4" strokeWidth={2.5} />
+                    <ChevronDown className="w-3 h-3" strokeWidth={2.5} />
                   </button>
                 </div>
 
                 {/* Comment content */}
-                <div className="flex-1 min-w-0 pt-0.5">
-                  <div className="flex items-center justify-between mb-1.5">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
                     <Link
                       to={`/profile/${comment.author}`}
-                      className="text-sm font-semibold text-gray-900 hover:text-indigo-600 transition-colors flex items-center gap-2"
+                      className="text-xs font-semibold text-gray-900 hover:text-indigo-600 transition-colors flex items-center gap-1.5"
                     >
-                      <div className="w-5 h-5 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-[10px] text-indigo-600">
-                        {comment.author.charAt(0).toUpperCase()}
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-[9px] text-indigo-600 overflow-hidden">
+                        {comment.profile_pic ? (
+                          <img
+                            src={comment.profile_pic}
+                            alt={comment.author}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // Fallback to initial avatar if image fails to load
+                              e.currentTarget.style.display = "none";
+                              const parent = e.currentTarget.parentElement;
+                              if (parent) {
+                                parent.innerHTML = `<span class="text-[9px] text-indigo-600">${comment.author
+                                  .charAt(0)
+                                  .toUpperCase()}</span>`;
+                              }
+                            }}
+                          />
+                        ) : (
+                          comment.author.charAt(0).toUpperCase()
+                        )}
                       </div>
                       {comment.author}
                     </Link>
@@ -379,7 +400,7 @@ function Message() {
                     </div>
                   </div>
 
-                  <div className="text-gray-700 leading-relaxed break-words space-y-2 text-sm">
+                  <div className="text-gray-700 leading-snug break-words space-y-1 text-xs">
                     <p>{comment.message}</p>
 
                     {/* If there's an image */}
@@ -415,19 +436,19 @@ function Message() {
                   </div>
 
                   {/* Footer Actions */}
-                  <div className="flex items-center gap-3 mt-2">
+                  <div className="flex items-center gap-2 mt-1.5">
                     <button
                       onClick={() => setInputBoxNeeded((prev) => !prev)}
-                      className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-md transition-all duration-200 ${
+                      className={`flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded transition-all duration-200 ${
                         inputBoxNeeded
                           ? "bg-indigo-50 text-indigo-600"
                           : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                       }`}
                     >
                       {inputBoxNeeded ? (
-                        <X className="w-3 h-3" />
+                        <X className="w-2.5 h-2.5" />
                       ) : (
-                        <MessageCircle className="w-3 h-3" />
+                        <MessageCircle className="w-2.5 h-2.5" />
                       )}
                       {inputBoxNeeded ? "Cancel" : "Reply"}
                     </button>
@@ -435,17 +456,17 @@ function Message() {
                     {comment.children.length > 0 && (
                       <button
                         onClick={() => toggleExpand(comment.id)}
-                        className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-indigo-600 transition-colors px-2 py-1 rounded-md hover:bg-indigo-50"
+                        className="flex items-center gap-0.5 text-[10px] font-medium text-gray-500 hover:text-indigo-600 transition-colors px-1.5 py-0.5 rounded hover:bg-indigo-50"
                       >
                         {expanded ? (
                           <>
-                            <ChevronUp className="w-3 h-3" />
-                            Hide Replies
+                            <ChevronUp className="w-2.5 h-2.5" />
+                            Hide
                           </>
                         ) : (
                           <>
-                            <CornerDownRight className="w-3 h-3" />
-                            {comment.children.length} Replies
+                            <CornerDownRight className="w-2.5 h-2.5" />
+                            {comment.children.length}
                           </>
                         )}
                       </button>
@@ -460,19 +481,19 @@ function Message() {
                         setInputComment("");
                         setInputBoxNeeded(false);
                       }}
-                      className="mt-3 flex gap-2 animate-in fade-in slide-in-from-top-2 duration-200"
+                      className="mt-2 flex gap-1.5 animate-in fade-in slide-in-from-top-2 duration-200"
                     >
                       <input
                         type="text"
                         placeholder="Write a reply..."
-                        className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+                        className="flex-1 px-2 py-1 bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-xs"
                         value={inputComment}
                         onChange={(e) => setInputComment(e.target.value)}
                         autoFocus
                       />
                       <button
                         type="submit"
-                        className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 font-medium text-xs shadow-sm hover:shadow-indigo-500/30 active:scale-95"
+                        className="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition-all duration-200 font-medium text-[10px] shadow-sm hover:shadow-indigo-500/30 active:scale-95"
                       >
                         Send
                       </button>
@@ -482,7 +503,7 @@ function Message() {
               </div>
 
               {expanded && comment.children.length > 0 && (
-                <div className="bg-gray-50/50 border-t border-gray-100 p-3 pl-6 space-y-2">
+                <div className="bg-gray-50/50 border-t border-gray-100 p-2 pl-4 space-y-1.5">
                   {comment.children.map((rep) => (
                     <RenderComment comment={rep} margin={margin} key={rep.id} />
                   ))}
