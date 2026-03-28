@@ -7,12 +7,13 @@ import { useState, useRef } from "react";
 import { Bell } from "lucide-react";
 import NotificationList from "@/pages/Notification.js";
 import { getNotificationCount } from "@/backend/notification.ts";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight,LogOutIcon,LogInIcon} from "lucide-react";
 
 function Header() {
   const [dropDownStatus, setDropDownStatus] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [namedisplay,setNamedisplay] = useState();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Redux Selectors (Typed safely)
@@ -28,6 +29,20 @@ function Header() {
     shouldReconnect: () => true,
     onError: () => {}, // Suppress errors for demo
   });
+
+  useEffect(()=>{
+    let counter=0
+    const interval=setInterval(() => {
+      setNamedisplay(name.slice(0,counter))
+      counter++
+      if(counter===name.length){
+        clearInterval(interval)
+      }
+    },50)
+
+    return()=>clearInterval(interval)
+
+  },[])
 
   // Effect: Initial Count Fetch
   useEffect(() => {
@@ -76,7 +91,7 @@ function Header() {
   const navigate = useNavigate();
 
   const navItems = [
-    { name: "login", topath: "/login", isactive: !authStatus },
+    { name: "login", topath: "/login", isactive: !authStatus ,lucideComp:LogInIcon},
     { name: "signup", topath: "/signup", isactive: !authStatus },
     { name: "profile", topath: `/profile/${name}`, isactive: authStatus },
     { name: "moderation", topath: "/moderator", isactive: authStatus },
@@ -85,9 +100,9 @@ function Header() {
   return (
     <>
       {/* Sticky Header with blur effect */}
-      <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
+      <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md h-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+          <div className="flex h-full items-center justify-between">
             {/* Logo Section */}
             <div onClick={() => navigate("/")} className="flex-shrink-0">
               <Logo />
@@ -96,7 +111,7 @@ function Header() {
             {/* Welcome Message (Hidden on small screens) */}
             <div className="hidden md:block text-sm font-medium text-gray-600">
               Welcome back,{" "}
-              <span className="text-gray-900 font-semibold">{name}</span>
+              <span className="text-gray-900 font-semibold">{namedisplay}</span>
             </div>
 
             {/* Actions Section */}
@@ -109,7 +124,7 @@ function Header() {
                     return (
                       <button
                         key={item.name}
-                        className="group relative h-10 w-10 overflow-hidden rounded-full border-2 border-gray-200 transition-all hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="group relative h-10 w-10 overflow-hidden rounded-full border-2 border-gray-200 transition-all hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 "
                         onClick={() => navigate(item.topath)}
                       >
                         {profile_pic ? (
@@ -123,16 +138,23 @@ function Header() {
                             {name.charAt(0).toUpperCase()}
                           </div>
                         )}
+                        
+
                       </button>
                     );
                   }
                   return (
                     <div key={item.name} className="hidden sm:block">
-                      <Button
+                      {
+                        item.lucideComp?<item.lucideComp size={22} 
+                        onClick={() => navigate(item.topath)}
+                        />:<Button
+                        className="rounded-3xl"
                         onClick={() => navigate(item.topath)}
                         value={item.name}
                         type="button"
                       />
+                      }
                     </div>
                   );
                 })}
