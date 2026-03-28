@@ -3,6 +3,22 @@ import { getSuggestion } from "@/backend/suggestion";
 import { Search, X, Hash, MessageSquare } from "lucide-react";
 import Button from "../Button";
 
+const highlightText = (text, query) => {
+  if (!query) return text;
+
+  const parts = text.split(new RegExp(`(${query})`, "gi"));
+
+  return parts.map((part, i) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+      <span key={i} className="bg-yellow-200 font-semibold">
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
+
 const Searchbar = ({ value }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [options, setOptions] = useState<string[][]>([]);
@@ -61,23 +77,34 @@ const Searchbar = ({ value }) => {
   return (
     <div className="w-full">
       <div className="relative flex gap-3">
-        <div className="relative flex-1">
+        <div className="relative flex-1 bg-amber-300 border-gray-200 border-2 rounded-4xl">
           {/* Search Icon */}
+
+          
           <Search
             className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none transition-colors duration-200 ${
               isFocused ? "text-indigo-500" : "text-gray-400"
             }`}
           />
+          
+          
 
           {/* Input Field */}
           <input
             type="text"
             placeholder="Search for rooms, topics, or tags..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e)=>{
+              if(e.key==="Enter"){
+                setOptions([]);
+                setQueryforDynamicSearch({ need: 3, keyword: searchQuery });
+                setIsFocused(false);
+              }
+            }}
+            onChange={(e) =>setSearchQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-            className={`w-full pl-12 pr-12 py-3.5 rounded-xl border-2 transition-all duration-200 focus:outline-none text-base shadow-sm bg-white ${
+            className={`max-w-2xl w-lvh mx-auto max-h-10 pl-12 pr-12 py-3.5 rounded-4xl border-2 transition-all duration-200 focus:outline-none text-base shadow-sm bg-white ${
               isFocused
                 ? "border-indigo-500 ring-4 ring-indigo-100 shadow-md"
                 : "border-gray-200 hover:border-gray-300"
@@ -85,14 +112,14 @@ const Searchbar = ({ value }) => {
           />
 
           {/* Clear Button */}
-          {searchQuery && (
+          {/* {searchQuery && (
             <button
               onClick={clearSearch}
               className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors duration-200 group"
             >
               <X className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
             </button>
-          )}
+          )} */}
 
           {/* Loading Indicator */}
           {isLoading && (
@@ -103,14 +130,14 @@ const Searchbar = ({ value }) => {
         </div>
 
         {/* Search Button */}
-        <Button
+        {/* <Button
           value="Search"
           onClick={() => {
             setOptions([]);
             setQueryforDynamicSearch({ need: 3, keyword: searchQuery });
             setIsFocused(false);
           }}
-        />
+        /> */}
       </div>
 
       {/* Suggestions Dropdown */}
@@ -129,31 +156,32 @@ const Searchbar = ({ value }) => {
               <div
                 key={idx}
                 onClick={() => handleSuggestionClick(item)}
-                className="px-4 py-3 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 cursor-pointer transition-all duration-200 group"
+                className="flex items-center px-2 py-1 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 cursor-pointer transition-all duration-200 group"
               >
                 {/* Room Name */}
-                <div className="flex items-center gap-2 mb-2">
-                  <MessageSquare className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-                  <span className="font-semibold text-gray-900 group-hover:text-indigo-700 transition-colors">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-sm text-gray-600  group-hover:text-indigo-700 transition-colors
+                  font-[Segoe UI] ml-1
+                  ">
                     {item[0]}
                   </span>
                 </div>
 
                 {/* Matched Fields */}
-                <div className="flex flex-wrap gap-2 ml-6">
+                <div className="flex flex-wrap gap-2 ml-6 ml-auto">
                   {Object.entries(item[2]).map(([key, value]) => (
                     <div
                       key={key}
-                      className="inline-flex items-center gap-1.5 text-xs bg-white border border-gray-200 text-gray-700 px-2.5 py-1.5 rounded-lg shadow-sm group-hover:border-indigo-200 group-hover:shadow transition-all"
+                      className="inline-flex items-center gap-1.5 text-xs bg-white  text-gray-700 px-2.5 py-1.5 rounded-lg  group-hover:shadow transition-all"
                     >
                       <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-md font-medium text-[10px] shadow-sm">
                         <Hash className="w-2.5 h-2.5" />
                         Match
-                      </span>
-                      <span className="font-semibold text-gray-800">
-                        {key}:
-                      </span>
-                      <span className="text-gray-600">{value}</span>
+                        </span>
+                        <span className="font-semibold text-gray-800">
+                          {key}:
+                        </span>
+                      <span className="text-gray-600">{highlightText(value, searchQuery)}</span>
                     </div>
                   ))}
                 </div>
