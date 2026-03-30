@@ -7,7 +7,7 @@ import {
   Clock,
   User,
   Tags,
-  Hash
+  Hash,
 } from "lucide-react";
 import { roomlist, roomlistpost, roomlistprev } from "../backend/room_list.ts";
 import { requestJoin } from "../backend/join_request.ts";
@@ -21,7 +21,9 @@ import { getRecommendations } from "@/backend/recommendation.ts";
 import { delMember, addMember } from "@/backend/member.ts";
 import { getHomePageStats } from "@/backend/getStats.ts";
 import Searchbar from "@/components/HomePage/Searchbar.tsx";
-import TopicBar from "@/components/HomePage/TopicBar.tsx";
+
+import { useRoomContext } from "@/context/room_context.ts";
+import StatsBar from "@/components/HomePage/StatsBar.tsx";
 
 // Helper function to get time ago
 const getTimeAgo = (dateString: string): string => {
@@ -103,14 +105,16 @@ export default function ChatroomHome() {
     total_users_count: number;
   };
   const authStatus = useSelector((state: any) => state.authStatus);
-  const [queryforDynamicSearch, setQueryforDynamicSearch]=useState<dataForDynamicQuery>({ need: -1, keyword: "" });
+  const [queryforDynamicSearch, setQueryforDynamicSearch] =
+    useState<dataForDynamicQuery>({ need: -1, keyword: "" });
   const [selectedTopic, setSelectedTopic] = useState("all");
-  const [rooms, setRooms] = useState<RoomType[]>([]);
+  // const [rooms, setRooms] = useState<RoomType[]>([]);
+  const { rooms, setRooms } = useRoomContext();
   const [topics, setTopics] = useState<TopicType[]>([]);
   const [aiStatus, setAiStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [homePageStats, setHomePageStats] = useState<HomePageStats>();
+
   // FOR pagination
   const [nextpageStatus, setNextpageStatus] = useState(false);
   const [prevpageStatus, setPrevpageStatus] = useState(false);
@@ -123,7 +127,7 @@ export default function ChatroomHome() {
     try {
       const resp = await roomlist(
         queryforDynamicSearch?.need || -1,
-        queryforDynamicSearch?.keyword || ""
+        queryforDynamicSearch?.keyword || "",
       );
       if (resp && resp.results) {
         setRooms(resp.results);
@@ -150,7 +154,7 @@ export default function ChatroomHome() {
     try {
       const resp = await roomlistpost(
         queryforDynamicSearch?.need || -1,
-        queryforDynamicSearch?.keyword || ""
+        queryforDynamicSearch?.keyword || "",
       );
       if (resp && resp.results) {
         setRooms(resp.results);
@@ -174,7 +178,7 @@ export default function ChatroomHome() {
     try {
       const resp = await roomlistprev(
         queryforDynamicSearch?.need || -1,
-        queryforDynamicSearch?.keyword || ""
+        queryforDynamicSearch?.keyword || "",
       );
       if (resp && resp.results) {
         setRooms(resp.results);
@@ -254,8 +258,8 @@ export default function ChatroomHome() {
       // Update local state to show pending immediately
       setRooms(
         rooms.map((r) =>
-          r.id === room_id ? { ...r, has_pending_request: true } : r
-        )
+          r.id === room_id ? { ...r, has_pending_request: true } : r,
+        ),
       );
       // alert("Request sent successfully!");
     } catch (e: any) {
@@ -280,10 +284,6 @@ export default function ChatroomHome() {
     console.log(`Rooms=>${rooms}`);
   }, [aiStatus]);
 
-  useEffect(() => {
-    getHomePageStats().then((data) => setHomePageStats(data));
-    getrooms();
-  }, []);
   const unsubscribe = (room_id: number) => {
     delMember(room_id);
     getrooms();
@@ -319,62 +319,9 @@ export default function ChatroomHome() {
         </div>
 
         {/* Stats Bar */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm mb-1">Active Rooms</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {homePageStats?.room_count}
-                </p>
-              </div>
-              <div className="bg-indigo-100 p-3 rounded-lg">
-                <MessageSquare className="w-6 h-6 text-indigo-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm mb-1">Online Users</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {homePageStats?.online_users_count}/
-                  {homePageStats?.total_users_count}
-                </p>
-              </div>
-              <div className="bg-green-100 p-3 rounded-lg">
-                <Users className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm mb-1">Messages Today</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {homePageStats?.message_count}
-                </p>
-              </div>
-              <div className="bg-purple-100 p-3 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-purple-600" />
-              </div>
-            </div>
-          </div>
-        </div>
+        <StatsBar />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar - Topics */}
-          <TopicBar
-            selectedTopic={selectedTopic}
-            setSelectedTopic={setSelectedTopic}
-            topics={topics}
-            homePageStats={homePageStats}
-            getrooms={getrooms}
-            topicWiseRoom={topicWiseRoom}
-          />
-
           {/* Main Content - Room List */}
 
           <div className="lg:col-span-3">
@@ -495,7 +442,7 @@ export default function ChatroomHome() {
                                     <span
                                       key={index}
                                       className={`px-2 py-0.5 text-[10px] font-medium rounded-full border ${getTagColor(
-                                        index
+                                        index,
                                       )}`}
                                     >
                                       #{tag}
@@ -561,7 +508,7 @@ export default function ChatroomHome() {
                                                   parent.classList.add(
                                                     "bg-gradient-to-br",
                                                     "from-indigo-400",
-                                                    "to-purple-500"
+                                                    "to-purple-500",
                                                   );
                                                   parent.innerHTML = `<span class="text-white text-[10px] font-bold flex items-center justify-center w-full h-full">${(
                                                     member.member_name || "U"

@@ -29,7 +29,7 @@ const ExpandedContext = createContext<{
 const PollComp = React.memo(
   ({ id, room_id }: { id: number; room_id: number }) => {
     return <PollComponents id={id} room_id={room_id} />;
-  }
+  },
 );
 
 function Message() {
@@ -88,7 +88,7 @@ function Message() {
 
   const getExpanded = useCallback(
     (commentId: number) => expandedComments[commentId] ?? false,
-    [expandedComments]
+    [expandedComments],
   );
   const toggleExpand = useCallback((commentId: number) => {
     setExpandedComments((prev) => ({
@@ -127,7 +127,7 @@ function Message() {
       }
     } else if (lastJsonMessage.task == "deleteMessage") {
       setComments((prev) =>
-        prev.filter((comment) => comment.id !== lastJsonMessage.message_id)
+        prev.filter((comment) => comment.id !== lastJsonMessage.message_id),
       );
     } else if (
       lastJsonMessage.task == "editMessage" ||
@@ -137,8 +137,8 @@ function Message() {
         prev.map((comment) =>
           comment.id === lastJsonMessage.message_id
             ? { ...comment, message: lastJsonMessage.message }
-            : comment
-        )
+            : comment,
+        ),
       );
     } else if (
       lastJsonMessage?.task === "vote" &&
@@ -163,8 +163,8 @@ function Message() {
           setVotes((prev) =>
             prev.filter(
               (v) =>
-                !(v.message_id === messageId && v.vote_type === voteTypeNum)
-            )
+                !(v.message_id === messageId && v.vote_type === voteTypeNum),
+            ),
           );
         }
       }
@@ -197,7 +197,7 @@ function Message() {
     comments: Comment[],
     message_id: number,
     status: string,
-    vote_type: string
+    vote_type: string,
   ): Comment[] => {
     return comments.map((comment) => {
       if (comment.id === message_id && vote_type === "upvote") {
@@ -218,7 +218,7 @@ function Message() {
             comment.children,
             message_id,
             status,
-            vote_type
+            vote_type,
           ),
         };
       } else return comment;
@@ -285,7 +285,7 @@ function Message() {
       const context = useContext(ExpandedContext);
       if (!context) {
         throw new Error(
-          "ExpandedContext must be used within a Message component"
+          "ExpandedContext must be used within a Message component",
         );
       }
       const { getExpanded, toggleExpand } = context;
@@ -295,10 +295,10 @@ function Message() {
 
       const expanded = getExpanded(comment.id);
       const isUpvoted = votes.find(
-        (v) => v.message_id == comment.id && v.vote_type == 1
+        (v) => v.message_id == comment.id && v.vote_type == 1,
       );
       const isDownvoted = votes.find(
-        (v) => v.message_id == comment.id && v.vote_type == -1
+        (v) => v.message_id == comment.id && v.vote_type == -1,
       );
 
       return (
@@ -332,8 +332,8 @@ function Message() {
                       isUpvoted
                         ? "text-orange-500"
                         : isDownvoted
-                        ? "text-indigo-500"
-                        : "text-gray-600"
+                          ? "text-indigo-500"
+                          : "text-gray-600"
                     }`}
                   >
                     {comment.upvotes - comment.downvotes}
@@ -513,7 +513,7 @@ function Message() {
           )}
         </>
       );
-    }
+    },
   );
 
   return (

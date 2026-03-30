@@ -4,6 +4,8 @@ import { type TopicType } from "@/types/Room.type";
 export type TopicContextType = {
   topics: TopicType[];
   setTopics: React.Dispatch<React.SetStateAction<TopicType[]>>;
+  selectedTopic: string;
+  setSelectedTopic: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const TopicContext = createContext<TopicContextType | null>(null);

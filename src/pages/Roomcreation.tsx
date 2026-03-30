@@ -38,7 +38,7 @@ const RoomCreation = () => {
       topic,
       privateStatus,
       tags,
-      val_for_mod
+      val_for_mod,
     );
 
     if (resp === 200 || resp === 201) {
@@ -164,8 +164,8 @@ const RoomCreation = () => {
               {ModerationType === -2
                 ? "ML model detects messages that violate guidelines and removes them automatically."
                 : ModerationType === -1
-                ? "ML model detects messages that violate guidelines and flags them for human verification, reducing load on moderators."
-                : "All moderation is done manually by human moderators."}
+                  ? "ML model detects messages that violate guidelines and flags them for human verification, reducing load on moderators."
+                  : "All moderation is done manually by human moderators."}
             </p>
           </div>
           {/* Private Toggle */}

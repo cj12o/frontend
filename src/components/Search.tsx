@@ -16,11 +16,11 @@ type SearchProps = {
 
 const FALLBACK_MODS: Moderator[] = [
   {
-    id:Number(localStorage.getItem("id")),
+    id: Number(localStorage.getItem("id")),
     username: localStorage.getItem("name") || "you",
     msg_count: 0,
     vote_count: 0,
-  }
+  },
 ];
 
 const Search = ({ value }: SearchProps) => {
@@ -30,34 +30,33 @@ const Search = ({ value }: SearchProps) => {
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const pagination_limit = 5;
-  const [availableModerators, setAvailableModerators]=useState<Moderator[]>(FALLBACK_MODS);
+  const [availableModerators, setAvailableModerators] =
+    useState<Moderator[]>(FALLBACK_MODS);
 
   const { moderator, setModerator, flag, room_id } = value;
 
-  const getModOptions=async()=>{
+  const getModOptions = async () => {
     //func gets available mod options
-    try{
-      if(flag && flag>0){
-        const resp2=await getStats(Number(room_id),searchQuery)
-        if(resp2.status>200) throw new Error(resp2.data)
-        setAvailableModerators(resp2.data)
+    try {
+      if (flag && flag > 0) {
+        const resp2 = await getStats(Number(room_id), searchQuery);
+        if (resp2.status > 200) throw new Error(resp2.data);
+        setAvailableModerators(resp2.data);
+      } else {
+        setAvailableModerators(FALLBACK_MODS);
       }
-      else{
-        setAvailableModerators(FALLBACK_MODS)
-      }
-    }catch(e:any){
-      console.error(e)
+    } catch (e: any) {
+      console.error(e);
     }
-  }
-
+  };
 
   useEffect(() => {
-    const handler=setTimeout(()=>{
-      getModOptions()
-    },400)
+    const handler = setTimeout(() => {
+      getModOptions();
+    }, 400);
 
-    return ()=>clearTimeout(handler)
-  },[searchQuery])
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

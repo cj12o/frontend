@@ -115,7 +115,7 @@ const Poll = ({ id, room_id }: { id: number; room_id: number }) => {
                       parent.classList.add(
                         "bg-gradient-to-br",
                         "from-indigo-400",
-                        "to-purple-500"
+                        "to-purple-500",
                       );
                       parent.innerHTML = `<span class="text-white text-[9px] font-bold flex items-center justify-center w-full h-full">${getAuthorUsername()
                         .charAt(0)

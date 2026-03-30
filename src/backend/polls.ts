@@ -9,7 +9,7 @@ const getPolls = async (message_id: number) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     console.log(`POLL DATA ${res.data?.poll[0].author}`);
@@ -21,15 +21,13 @@ const getPolls = async (message_id: number) => {
 
 const getVoteData = async (room_id: number) => {
   try {
-    const token = `Token ${localStorage.getItem("cookie")}`||""
-    const res = await axios.get(import.meta.env.VITE_VOTE_EPT + `${room_id}/`,
-        {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization":token,
-            },
-        }
-    );
+    const token = `Token ${localStorage.getItem("cookie")}` || "";
+    const res = await axios.get(import.meta.env.VITE_VOTE_EPT + `${room_id}/`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    });
 
     return res.data?.polls;
   } catch (e) {

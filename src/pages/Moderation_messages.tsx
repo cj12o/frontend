@@ -47,7 +47,7 @@ const Moderation_messages = () => {
       const resp = await sendMessageList(
         Number(id),
         finalNoActionNeeded,
-        id_action_needed
+        id_action_needed,
       );
       if (resp == 200) {
         setPopUp(true);
@@ -202,10 +202,10 @@ const Moderation_messages = () => {
                         }`}
                         onClick={() => {
                           set_id_action_needed((prev) =>
-                            Array.from(new Set([...prev, msg.id]))
+                            Array.from(new Set([...prev, msg.id])),
                           );
                           set_id_no_action_needed((prev) =>
-                            prev.filter((id) => id !== msg.id)
+                            prev.filter((id) => id !== msg.id),
                           );
                         }}
                       >
@@ -219,10 +219,10 @@ const Moderation_messages = () => {
                         }`}
                         onClick={() => {
                           set_id_no_action_needed((prev) =>
-                            Array.from(new Set([...prev, msg.id]))
+                            Array.from(new Set([...prev, msg.id])),
                           );
                           set_id_action_needed((prev) =>
-                            prev.filter((id) => id !== msg.id)
+                            prev.filter((id) => id !== msg.id),
                           );
                         }}
                       >
@@ -233,10 +233,10 @@ const Moderation_messages = () => {
                           className="px-3 py-1.5 rounded-md font-medium text-xs text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors"
                           onClick={() => {
                             set_id_action_needed((prev) =>
-                              prev.filter((id) => id !== msg.id)
+                              prev.filter((id) => id !== msg.id),
                             );
                             set_id_no_action_needed((prev) =>
-                              prev.filter((id) => id !== msg.id)
+                              prev.filter((id) => id !== msg.id),
                             );
                           }}
                         >

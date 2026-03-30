@@ -1,9 +1,15 @@
-import { useSelector } from "react-redux"
-import { Settings as SettingsIcon, Bell, Lock, LogOut, User } from "lucide-react"
+import { useSelector } from "react-redux";
+import {
+  Settings as SettingsIcon,
+  Bell,
+  Lock,
+  LogOut,
+  User,
+} from "lucide-react";
 
 export default function Settings() {
-  const userName = useSelector((state: any) => state.name)
-  const authStatus = useSelector((state: any) => state.authStatus)
+  const userName = useSelector((state: any) => state.name);
+  const authStatus = useSelector((state: any) => state.authStatus);
 
   if (!authStatus) {
     return (
@@ -12,7 +18,7 @@ export default function Settings() {
           <p className="text-gray-600">Please login to access settings</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -23,7 +29,9 @@ export default function Settings() {
             <SettingsIcon className="w-8 h-8 text-indigo-600" />
             Settings
           </h1>
-          <p className="text-gray-600 mt-2">Manage your account and preferences</p>
+          <p className="text-gray-600 mt-2">
+            Manage your account and preferences
+          </p>
         </div>
 
         <div className="space-y-6">
@@ -31,7 +39,9 @@ export default function Settings() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <div className="flex items-center gap-3 mb-4">
               <User className="w-5 h-5 text-indigo-600" />
-              <h2 className="text-lg font-semibold text-gray-900">Profile Information</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Profile Information
+              </h2>
             </div>
             <div className="space-y-4">
               <div>
@@ -52,19 +62,37 @@ export default function Settings() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <div className="flex items-center gap-3 mb-4">
               <Bell className="w-5 h-5 text-indigo-600" />
-              <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Notifications
+              </h2>
             </div>
             <div className="space-y-4">
               <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 rounded" defaultChecked />
-                <span className="text-sm text-gray-700">Email notifications</span>
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 rounded"
+                  defaultChecked
+                />
+                <span className="text-sm text-gray-700">
+                  Email notifications
+                </span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 rounded" defaultChecked />
-                <span className="text-sm text-gray-700">Message notifications</span>
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 rounded"
+                  defaultChecked
+                />
+                <span className="text-sm text-gray-700">
+                  Message notifications
+                </span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 rounded" defaultChecked />
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 rounded"
+                  defaultChecked
+                />
                 <span className="text-sm text-gray-700">Room updates</span>
               </label>
             </div>
@@ -74,7 +102,9 @@ export default function Settings() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <div className="flex items-center gap-3 mb-4">
               <Lock className="w-5 h-5 text-indigo-600" />
-              <h2 className="text-lg font-semibold text-gray-900">Privacy & Security</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Privacy & Security
+              </h2>
             </div>
             <div className="space-y-4">
               <button className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition text-left">
@@ -90,7 +120,9 @@ export default function Settings() {
           <div className="bg-red-50 rounded-lg border border-red-200 p-6">
             <div className="flex items-center gap-3 mb-4">
               <LogOut className="w-5 h-5 text-red-600" />
-              <h2 className="text-lg font-semibold text-gray-900">Danger Zone</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Danger Zone
+              </h2>
             </div>
             <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
               Delete Account
@@ -99,5 +131,5 @@ export default function Settings() {
         </div>
       </div>
     </div>
-  )
+  );
 }

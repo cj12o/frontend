@@ -1,80 +1,78 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { v4 as uuidv4, v1 } from 'uuid';
+import { v4 as uuidv4, v1 } from "uuid";
 
+type History = {
+  id: number;
+  timespent: number;
+};
 
-type History={
-    id:number,
-    timespent:number,
-}
+const authSlice = createSlice({
+  name: "auth",
+  initialState: {
+    authStatus: JSON.parse(localStorage.getItem("authStatus") || "false"),
+    cookie: localStorage.getItem("cookie") || null,
+    visitedRoomId: [] as History[],
+    sessionId: localStorage.getItem("sessionId") || null,
+    name: localStorage.getItem("name") || "",
+    profile_pic: localStorage.getItem("profile_pic") || null,
+    id: localStorage.getItem("id") || null,
+  },
+  reducers: {
+    login: (state: any, action) => {
+      const seshid = uuidv4();
+      // console.log("Reducer got payload:", action.payload);
+      state.authStatus = true;
+      state.cookie = action.payload.cookie;
+      state.sessionId = seshid;
+      state.name = action.payload.name;
+      state.profile_pic = action.payload.profile_pic;
+      state.id = action.payload.id;
 
-
-const authSlice=createSlice({
-    name:"auth",
-    initialState:{
-        authStatus:JSON.parse(localStorage.getItem("authStatus")||"false"),
-        cookie:localStorage.getItem("cookie")||null,
-        visitedRoomId:[] as History [],
-        sessionId:localStorage.getItem("sessionId")||null,
-        name:localStorage.getItem("name")||"",
-        profile_pic:localStorage.getItem("profile_pic")||null,
-        id:localStorage.getItem("id")||null
-
+      //local storage
+      localStorage.setItem("cookie", action.payload.cookie);
+      localStorage.setItem("authStatus", JSON.stringify(true));
+      localStorage.setItem("sessionId", seshid);
+      localStorage.setItem("name", action.payload.name);
+      localStorage.setItem("profile_pic", action.payload.profile_pic);
+      localStorage.setItem("id", action.payload.id);
     },
-    reducers:{
-        login:(state:any,action)=>{
-            const seshid=uuidv4()
-            // console.log("Reducer got payload:", action.payload);
-            state.authStatus=true
-            state.cookie=action.payload.cookie
-            state.sessionId=seshid
-            state.name=action.payload.name
-            state.profile_pic=action.payload.profile_pic
-            state.id=action.payload.id  
-        
-            //local storage
-            localStorage.setItem("cookie",action.payload.cookie)
-            localStorage.setItem("authStatus",JSON.stringify(true))
-            localStorage.setItem("sessionId",seshid)
-            localStorage.setItem("name",action.payload.name)
-            localStorage.setItem("profile_pic",action.payload.profile_pic)
-            localStorage.setItem("id",action.payload.id)    
-        },
-        logout:(state)=>{
-            
-            localStorage.removeItem("cookie")
-            localStorage.removeItem("authStatus")
-            localStorage.removeItem("sessionId")
-            localStorage.removeItem("name")
-            localStorage.removeItem("profile_pic")
-            localStorage.removeItem("visitedRoomId")
-            localStorage.removeItem("id")
+    logout: (state) => {
+      localStorage.removeItem("cookie");
+      localStorage.removeItem("authStatus");
+      localStorage.removeItem("sessionId");
+      localStorage.removeItem("name");
+      localStorage.removeItem("profile_pic");
+      localStorage.removeItem("visitedRoomId");
+      localStorage.removeItem("id");
 
-            // state.visitedRoomId=[]
-            state.authStatus=false
-            state.cookie=null
-            state.sessionId=null
-            state.name=""
-            state.profile_pic=null
-            state.visitedRoomId=[]
-            state.id=null
-        },
-        setName:(state,action)=>{
-            state.name=action.payload
-            localStorage.setItem("name",action.payload)
-
-        },
-        setProfile:(state,action)=>{
-            state.profile_pic=action.payload
-            localStorage.setItem("profile_pic",action.payload)
-        },
-        addtoHistory:(state,action)=>{
-            // console.log("Reducer got payload:", action.payload);
-            const id=Number(action.payload.id)
-            state.visitedRoomId.push({id:id,timespent:action.payload.time_spent})
-        }
+      // state.visitedRoomId=[]
+      state.authStatus = false;
+      state.cookie = null;
+      state.sessionId = null;
+      state.name = "";
+      state.profile_pic = null;
+      state.visitedRoomId = [];
+      state.id = null;
     },
-    
-})
+    setName: (state, action) => {
+      state.name = action.payload;
+      localStorage.setItem("name", action.payload);
+    },
+    setProfile: (state, action) => {
+      state.profile_pic = action.payload;
+      localStorage.setItem("profile_pic", action.payload);
+    },
+    addtoHistory: (state, action) => {
+      // console.log("Reducer got payload:", action.payload);
+      const id = Number(action.payload.id);
+      state.visitedRoomId.push({
+        id: id,
+        timespent: action.payload.time_spent,
+      });
+    },
+  },
+});
 
-export const {login,logout,addtoHistory,setProfile,setName}=authSlice.actions
-export default authSlice.reducer
+export const { login, logout, addtoHistory, setProfile, setName } =
+  authSlice.actions;
+export default authSlice.reducer;

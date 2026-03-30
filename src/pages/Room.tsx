@@ -155,8 +155,8 @@ function Room() {
                           roomInfo.moderation_type === 0
                             ? "bg-blue-50/80 border-blue-200/60 hover:border-blue-300"
                             : roomInfo.moderation_type === -1
-                            ? "bg-purple-50/80 border-purple-200/60 hover:border-purple-300"
-                            : "bg-green-50/80 border-green-200/60 hover:border-green-300"
+                              ? "bg-purple-50/80 border-purple-200/60 hover:border-purple-300"
+                              : "bg-green-50/80 border-green-200/60 hover:border-green-300"
                         }`}
                       >
                         <div
@@ -164,19 +164,18 @@ function Room() {
                             roomInfo.moderation_type === 0
                               ? "bg-blue-100"
                               : roomInfo.moderation_type === -1
-                              ? "bg-purple-100"
-                              : "bg-green-100"
+                                ? "bg-purple-100"
+                                : "bg-green-100"
                           }`}
-                        >
-                        </div>
+                        ></div>
                         <div className="flex-1">
                           <div
                             className={`text-[10px] font-semibold uppercase tracking-wide ${
                               roomInfo.moderation_type === 0
                                 ? "text-blue-600"
                                 : roomInfo.moderation_type === -1
-                                ? "text-purple-600"
-                                : "text-green-600"
+                                  ? "text-purple-600"
+                                  : "text-green-600"
                             }`}
                           >
                             Moderation
@@ -186,15 +185,15 @@ function Room() {
                               roomInfo.moderation_type === 0
                                 ? "text-blue-700"
                                 : roomInfo.moderation_type === -1
-                                ? "text-purple-700"
-                                : "text-green-700"
+                                  ? "text-purple-700"
+                                  : "text-green-700"
                             }`}
                           >
                             {roomInfo.moderation_type === 0
                               ? "Manual"
                               : roomInfo.moderation_type === -1
-                              ? "Semi-Auto"
-                              : "Automatic"}
+                                ? "Semi-Auto"
+                                : "Automatic"}
                           </div>
                         </div>
                       </div>
@@ -274,7 +273,7 @@ function Room() {
                                   parent.classList.add(
                                     "bg-gradient-to-br",
                                     "from-indigo-400",
-                                    "to-purple-500"
+                                    "to-purple-500",
                                   );
                                   parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-white font-bold text-sm">${obj.member_name
                                     .charAt(0)
@@ -295,8 +294,8 @@ function Room() {
                             obj.status === true
                               ? "bg-emerald-400 group-hover:scale-125"
                               : obj.status === false
-                              ? "bg-amber-400 group-hover:scale-125"
-                              : "bg-gray-300"
+                                ? "bg-amber-400 group-hover:scale-125"
+                                : "bg-gray-300"
                           }`}
                         >
                           {obj.status === true && (
@@ -315,8 +314,8 @@ function Room() {
                               obj.status === true
                                 ? "text-emerald-600"
                                 : obj.status === false
-                                ? "text-amber-600"
-                                : "text-gray-500"
+                                  ? "text-amber-600"
+                                  : "text-gray-500"
                             }`}
                           >
                             <div
@@ -324,15 +323,15 @@ function Room() {
                                 obj.status === true
                                   ? "bg-emerald-500"
                                   : obj.status === false
-                                  ? "bg-amber-500"
-                                  : "bg-gray-400"
+                                    ? "bg-amber-500"
+                                    : "bg-gray-400"
                               }`}
                             />
                             {obj.status === true
                               ? "Online"
                               : obj.status === false
-                              ? "Away"
-                              : "Offline"}
+                                ? "Away"
+                                : "Offline"}
                           </div>
                         </div>
                       )}

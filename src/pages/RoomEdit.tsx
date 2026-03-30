@@ -18,7 +18,7 @@ const RoomEdit = () => {
   const [loading, setLoading] = useState(false);
 
   const [moderator, setModerator] = useState<Moderator[]>([]);
-  const [ModerationType,setModerationType] = useState(0);
+  const [ModerationType, setModerationType] = useState(0);
   const { id } = useParams();
 
   const loadData = async () => {
@@ -30,7 +30,7 @@ const RoomEdit = () => {
       setRoomDescription(resp.description);
       setModerator(resp.moderator);
       setPrivateStatus(resp.is_private);
-      setModerationType(resp.moderation_type)
+      setModerationType(resp.moderation_type);
     } catch (e: any) {
       setError(e);
     }
@@ -49,12 +49,11 @@ const RoomEdit = () => {
       mod_id.push(mod.id);
     });
 
-    let val_for_mod=mod_id
-    if(ModerationType==-1){
+    let val_for_mod = mod_id;
+    if (ModerationType == -1) {
       val_for_mod.splice(0, 0, -1);
-    }
-    else if(ModerationType==-2){
-      val_for_mod=[-2]
+    } else if (ModerationType == -2) {
+      val_for_mod = [-2];
     }
     const resp = await updateRoom(
       Number(id),
@@ -64,7 +63,7 @@ const RoomEdit = () => {
       privateStataus_val,
       tags,
       // mod_id
-      val_for_mod
+      val_for_mod,
     );
 
     if (resp === 200) {
@@ -182,8 +181,8 @@ const RoomEdit = () => {
               {ModerationType === -2
                 ? "ML model detects messages that violate guidelines and removes them automatically."
                 : ModerationType === -1
-                ? "ML model detects messages that violate guidelines and flags them for human verification, reducing load on moderators."
-                : "All moderation is done manually by human moderators."}
+                  ? "ML model detects messages that violate guidelines and flags them for human verification, reducing load on moderators."
+                  : "All moderation is done manually by human moderators."}
             </p>
           </div>
           {/* Private Toggle */}

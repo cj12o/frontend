@@ -19,7 +19,7 @@ export const requestJoin = async (room_id: number) => {
       },
       {
         headers: getHeaders(),
-      }
+      },
     );
     return response.data;
   } catch (error) {
@@ -40,7 +40,7 @@ export const listJoinRequests = async () => {
 
 export const manageJoinRequest = async (
   request_id: number,
-  action: "ACCEPT" | "REJECT"
+  action: "ACCEPT" | "REJECT",
 ) => {
   try {
     const response = await axios.post(
@@ -51,7 +51,7 @@ export const manageJoinRequest = async (
       },
       {
         headers: getHeaders(),
-      }
+      },
     );
     return response.data;
   } catch (error) {

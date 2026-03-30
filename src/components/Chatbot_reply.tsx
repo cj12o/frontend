@@ -9,7 +9,7 @@ function Chatbot_reply({ id }: { id: number }) {
   const { sendMessage, lastMessage } = useWebSocket(
     `ws://127.0.0.1:8000/ws/chatbot/${id}/?token=${
       localStorage.getItem("cookie") || ""
-    }`
+    }`,
   );
 
   const { setLlmResp, setQuery } = useContext(ChatbotContext);

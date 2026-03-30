@@ -26,7 +26,7 @@ const NotificationList: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [joinRequests, setJoinRequests] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<"notifications" | "requests">(
-    "notifications"
+    "notifications",
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +109,7 @@ const NotificationList: React.FC = () => {
 
   const handleManageRequest = async (
     id: number,
-    action: "ACCEPT" | "REJECT"
+    action: "ACCEPT" | "REJECT",
   ) => {
     try {
       await manageJoinRequest(id, action);

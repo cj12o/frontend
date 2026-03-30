@@ -1,26 +1,29 @@
-import { getTopics as getTopicsBackend } from "@/backend/topic"
+import { getTopics as getTopicsBackend } from "@/backend/topic";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
-  SidebarHeader,
   SidebarGroupLabel,
-  SidebarGroupContent
-} from "@/components/ui/sidebar"
-import { useTopicContext } from "@/context/topics_context"
-import { type TopicType } from "@/types/Room.type"
-import { useEffect } from "react"
-
-
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Menu } from "lucide-react"
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { useTopicContext } from "@/context/topics_context";
+import { useEffect } from "react";
+import { House, Plus, Hash } from "lucide-react";
+import { roomlist } from "@/backend/room_list";
+import { useRoomContext } from "@/context/room_context";
+import { useErrorContext } from "@/context/error_context";
 
 export function AppSidebar() {
-  
-  const {topics,setTopics}=useTopicContext()
+  const { topics, setTopics, selectedTopic, setSelectedTopic } =
+    useTopicContext();
+  const { rooms, setRooms } = useRoomContext();
+  const { error, setError } = useErrorContext();
 
-  const get_topics=async()=>{
+  const get_topics = async () => {
     try {
       const resp = await getTopicsBackend();
       if (resp && Array.isArray(resp)) {
@@ -32,76 +35,98 @@ export function AppSidebar() {
       console.error("Error fetching topics:", e);
       setTopics([]);
     }
-  }
-  
-  useEffect(()=>{
-    get_topics()
-  },[])
+  };
 
+  const gettopicWiseRoom = async (topic: string) => {
+    //for parent topic
+    try {
+      const resp = await roomlist(2, topic);
+      if (resp && resp.results) {
+        setRooms(resp.results);
+        setSelectedTopic(topic);
+      } else {
+        setRooms([]);
+        setError(`No rooms found for topic: ${topic}`);
+      }
+    } catch (e: any) {
+      console.error("Error fetching topic rooms:", e);
+      setError(e.message || `Failed to load rooms for topic: ${topic}`);
+      setRooms([]);
+    }
+  };
+
+  useEffect(() => {
+    get_topics();
+  }, []);
 
   return (
     <Sidebar collapsible="icon" className="sticky overflow-visible border-r">
-        
-        <div className="absolute right-0 translate-x-1/2 top-20 z-50">
-          <SidebarTrigger />
-        </div>
-        
-        <SidebarContent className=" bg-black">
-          <SidebarGroup id="Account" className="bg-red-400">
-          {
-            topics.map((topic)=>{
-              return(
-                <SidebarGroup key={topic.id}>
-                  <SidebarGroupLabel>{topic.topic}</SidebarGroupLabel>
-                  <SidebarGroupContent>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              )
-            })
-          }
-          </SidebarGroup >
-          <SidebarGroup id="Topics" className="bg-red-900 h-fit">
-            <SidebarGroupLabel>Topics</SidebarGroupLabel>
-              {
-                topics.map((topic)=>{
-                  return(
-                  
-                    <SidebarGroupContent id={topic.topic}>
-                      {topic.topic}
-                    </SidebarGroupContent>
-                  )
-                })
-              }
-            </SidebarGroup >
-          </SidebarContent>
-        <SidebarFooter />
-      
-      
-          
-        
-        
-      
+      {/* Trigger button - half on sidebar, half floating out */}
+      <div className="absolute right-0 translate-x-1/2 top-5 z-50">
+        <SidebarTrigger />
+      </div>
+
+      <SidebarContent>
+        {/* Main Navigation */}
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Home">
+                <a href="/">
+                  <House className="size-4" />
+                  <span>Home</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Create Room">
+                <a href="/createRoom">
+                  <Plus className="size-4" />
+                  <span>Create Room</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* Topics List */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Topics</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {topics.map((topic) => (
+                <SidebarMenuItem key={topic.id}>
+                  <SidebarMenuButton tooltip={topic.topic}>
+                    <div className="flex justify-between  items-center">
+                      <div className="flex items-center justify-center">
+                        <Hash className="size-4 " />
+                        <span
+                          className={
+                            selectedTopic === topic.topic
+                              ? "bg-red-300 pr-1 right-0"
+                              : "pr-1"
+                          }
+                          onClick={() => {
+                            setSelectedTopic(topic.topic);
+                            gettopicWiseRoom(topic.topic);
+                          }}
+                        >
+                          {topic.topic}
+                        </span>
+                      </div>
+
+                      <span className="p-1 rounded-full shadow-2xl">
+                        {topic.relatedRooms}
+                      </span>
+                    </div>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
     </Sidebar>
-  )
-}
-
-
-export function FloatingSidebarTrigger() {
-  return (
-    <div className="fixed top-20 left-60 z-50">
-      <SidebarTrigger>
-        <button className="group relative flex items-center justify-center w-11 h-11 rounded-xl 
-          border border-white/20 bg-white/10 backdrop-blur-md shadow-lg
-          transition-all duration-300 hover:scale-105 hover:bg-white/20 active:scale-95">
-
-          {/* glow */}
-          <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 
-            transition duration-300 bg-gradient-to-r from-blue-400/30 to-purple-400/30 blur-md" />
-
-          {/* icon */}
-          <Menu className="relative z-10 w-5 h-5 text-gray-700 group-hover:text-black transition-colors" />
-        </button>
-      </SidebarTrigger>
-    </div>
-  )
+  );
 }

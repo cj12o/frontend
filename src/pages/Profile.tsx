@@ -105,7 +105,7 @@ export default function UserProfile() {
         updatedBio,
         updatedEmail,
         updatedUsername,
-        dispatch
+        dispatch,
       );
 
       setToUpdateImageUrl(null);

@@ -7,13 +7,13 @@ import { useState, useRef } from "react";
 import { Bell } from "lucide-react";
 import NotificationList from "@/pages/Notification.js";
 import { getNotificationCount } from "@/backend/notification.ts";
-import { ChevronRight,LogOutIcon,LogInIcon} from "lucide-react";
+import { ChevronRight, LogOutIcon, LogInIcon } from "lucide-react";
 
 function Header() {
   const [dropDownStatus, setDropDownStatus] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-  const [namedisplay,setNamedisplay] = useState();
+  const [namedisplay, setNamedisplay] = useState();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Redux Selectors (Typed safely)
@@ -30,19 +30,18 @@ function Header() {
     onError: () => {}, // Suppress errors for demo
   });
 
-  useEffect(()=>{
-    let counter=0
-    const interval=setInterval(() => {
-      setNamedisplay(name.slice(0,counter))
-      counter++
-      if(counter===name.length){
-        clearInterval(interval)
+  useEffect(() => {
+    let counter = 0;
+    const interval = setInterval(() => {
+      setNamedisplay(name.slice(0, counter));
+      counter++;
+      if (counter === name.length) {
+        clearInterval(interval);
       }
-    },50)
+    }, 50);
 
-    return()=>clearInterval(interval)
-
-  },[])
+    return () => clearInterval(interval);
+  }, []);
 
   // Effect: Initial Count Fetch
   useEffect(() => {
@@ -91,7 +90,12 @@ function Header() {
   const navigate = useNavigate();
 
   const navItems = [
-    { name: "login", topath: "/login", isactive: !authStatus ,lucideComp:LogInIcon},
+    {
+      name: "login",
+      topath: "/login",
+      isactive: !authStatus,
+      lucideComp: LogInIcon,
+    },
     { name: "signup", topath: "/signup", isactive: !authStatus },
     { name: "profile", topath: `/profile/${name}`, isactive: authStatus },
     { name: "moderation", topath: "/moderator", isactive: authStatus },
@@ -138,23 +142,24 @@ function Header() {
                             {name.charAt(0).toUpperCase()}
                           </div>
                         )}
-                        
-
                       </button>
                     );
                   }
                   return (
                     <div key={item.name} className="hidden sm:block">
-                      {
-                        item.lucideComp?<item.lucideComp size={22} 
-                        onClick={() => navigate(item.topath)}
-                        />:<Button
-                        className="rounded-3xl"
-                        onClick={() => navigate(item.topath)}
-                        value={item.name}
-                        type="button"
-                      />
-                      }
+                      {item.lucideComp ? (
+                        <item.lucideComp
+                          size={22}
+                          onClick={() => navigate(item.topath)}
+                        />
+                      ) : (
+                        <Button
+                          className="rounded-3xl"
+                          onClick={() => navigate(item.topath)}
+                          value={item.name}
+                          type="button"
+                        />
+                      )}
                     </div>
                   );
                 })}

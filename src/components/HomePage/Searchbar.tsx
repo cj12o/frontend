@@ -15,7 +15,7 @@ const highlightText = (text, query) => {
       </span>
     ) : (
       part
-    )
+    ),
   );
 };
 
@@ -80,28 +80,25 @@ const Searchbar = ({ value }) => {
         <div className="relative flex-1 bg-amber-300 border-gray-200 border-2 rounded-4xl">
           {/* Search Icon */}
 
-          
           <Search
             className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none transition-colors duration-200 ${
               isFocused ? "text-indigo-500" : "text-gray-400"
             }`}
           />
-          
-          
 
           {/* Input Field */}
           <input
             type="text"
             placeholder="Search for rooms, topics, or tags..."
             value={searchQuery}
-            onKeyDown={(e)=>{
-              if(e.key==="Enter"){
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
                 setOptions([]);
                 setQueryforDynamicSearch({ need: 3, keyword: searchQuery });
                 setIsFocused(false);
               }
             }}
-            onChange={(e) =>setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setTimeout(() => setIsFocused(false), 200)}
             className={`max-w-2xl w-lvh mx-auto max-h-10 pl-12 pr-12 py-3.5 rounded-4xl border-2 transition-all duration-200 focus:outline-none text-base shadow-sm bg-white ${
@@ -160,9 +157,11 @@ const Searchbar = ({ value }) => {
               >
                 {/* Room Name */}
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm text-gray-600  group-hover:text-indigo-700 transition-colors
+                  <span
+                    className="font-medium text-sm text-gray-600  group-hover:text-indigo-700 transition-colors
                   font-[Segoe UI] ml-1
-                  ">
+                  "
+                  >
                     {item[0]}
                   </span>
                 </div>
@@ -177,11 +176,13 @@ const Searchbar = ({ value }) => {
                       <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-md font-medium text-[10px] shadow-sm">
                         <Hash className="w-2.5 h-2.5" />
                         Match
-                        </span>
-                        <span className="font-semibold text-gray-800">
-                          {key}:
-                        </span>
-                      <span className="text-gray-600">{highlightText(value, searchQuery)}</span>
+                      </span>
+                      <span className="font-semibold text-gray-800">
+                        {key}:
+                      </span>
+                      <span className="text-gray-600">
+                        {highlightText(value, searchQuery)}
+                      </span>
                     </div>
                   ))}
                 </div>

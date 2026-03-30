@@ -23,7 +23,9 @@ export default function StatsHUD({ stats }: StatsHUDProps) {
             <div className="bg-indigo-50 p-1.5 rounded">
               <MessageSquare className="w-4 h-4 text-indigo-600" />
             </div>
-            <span className="font-semibold text-gray-900">{stats?.room_count}</span>
+            <span className="font-semibold text-gray-900">
+              {stats?.room_count}
+            </span>
             <span className="text-gray-500">rooms</span>
           </div>
 
@@ -41,7 +43,9 @@ export default function StatsHUD({ stats }: StatsHUDProps) {
             <div className="bg-purple-50 p-1.5 rounded">
               <TrendingUp className="w-4 h-4 text-purple-600" />
             </div>
-            <span className="font-semibold text-gray-900">{stats?.message_count}</span>
+            <span className="font-semibold text-gray-900">
+              {stats?.message_count}
+            </span>
             <span className="text-gray-500">msgs</span>
           </div>
         </div>
