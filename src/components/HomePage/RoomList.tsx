@@ -93,7 +93,7 @@ export default function RoomList({
   onNavigate,
 }: RoomListProps) {
   return (
-    <div className="w-full bg-amber-800 mx-auto px-4 py-3">
+    <div className="w-full mx-auto px-4 py-3 mt-10">
       {/* Error Message */}
       {error && (
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -124,7 +124,7 @@ export default function RoomList({
               rooms.map((room) => (
                 <div
                   key={room.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 hover:shadow-lg hover:border-indigo-200 transition-all duration-200 cursor-pointer group hover:-translate-y-1"
+                  className="flex bg-white shadow-sm border border-gray-100 p-3 hover:shadow-lg hover:border-indigo-200 transition-all duration-200 cursor-pointer group hover:-translate-y-1"
                 >
                   <div className="flex items-start justify-between mb-1.5">
                     <div className="flex-1">
@@ -295,7 +295,7 @@ export default function RoomList({
                       
                         {room.isMember ? (
                       <button
-                        className="px-5 py-2 text-sm font-medium rounded-lg transition shadow-sm bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-red-600 hover:border-red-200"
+                        className="ml-auto px-5 py-2 text-sm font-medium rou transition shadow-sm bg-white border border-b-red-600  text-gray-700 hover:bg-gray-50 hover:text-red-600 hover:border-red-200"
                         onClick={(e) => {
                           e.preventDefault();
                           onUnsubscribe(Number(room.id));
@@ -323,7 +323,7 @@ export default function RoomList({
                       </button>
                     ) : (
                       <button
-                        className="px-5 py-2 text-sm font-medium rounded-lg transition shadow-sm bg-indigo-600 text-white hover:bg-indigo-700"
+                        className="ml-auto px-5 py-2 text-sm font-medium rou transition shadow-sm bg-white border border-b-green-600  text-gray-700 hover:bg-gray-50 hover:text-green-600 hover:border-green-200"
                         onClick={(e) => {
                           e.preventDefault();
                           onSubscribe(Number(room.id));
