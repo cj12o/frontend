@@ -103,8 +103,7 @@ export default function ChatroomHome() {
     total_users_count: number;
   };
   const authStatus = useSelector((state: any) => state.authStatus);
-  const [queryforDynamicSearch, setQueryforDynamicSearch] =
-    useState<dataForDynamicQuery>({ need: -1, keyword: "" });
+  const [queryforDynamicSearch, setQueryforDynamicSearch]=useState<dataForDynamicQuery>({ need: -1, keyword: "" });
   const [selectedTopic, setSelectedTopic] = useState("all");
   const [rooms, setRooms] = useState<RoomType[]>([]);
   const [topics, setTopics] = useState<TopicType[]>([]);
@@ -112,7 +111,7 @@ export default function ChatroomHome() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [homePageStats, setHomePageStats] = useState<HomePageStats>();
-  ///FOR pagination
+  // FOR pagination
   const [nextpageStatus, setNextpageStatus] = useState(false);
   const [prevpageStatus, setPrevpageStatus] = useState(false);
   // const [memberStatus, setMemberStatus] = useState<MemeberStatus[]>([]);
