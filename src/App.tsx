@@ -7,6 +7,7 @@ import {
   TopicContextProvider,
   RoomContextProvider,
   ErrorContextProvider,
+  AIModeContextProvider,
 } from "./providers/index.ts";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -15,18 +16,20 @@ function App() {
     <TooltipProvider>
       <div className="w-full h-full">
         <Header />
-        <TopicContextProvider>
-          <RoomContextProvider>
-            <ErrorContextProvider>
-              <SidebarProvider>
-                <AppSidebar />
-                <main className="flex-1 overflow-auto">
-                  <Outlet />
-                </main>
-              </SidebarProvider>
-            </ErrorContextProvider>
-          </RoomContextProvider>
-        </TopicContextProvider>
+        <AIModeContextProvider>
+          <TopicContextProvider>
+            <RoomContextProvider>
+              <ErrorContextProvider>
+                <SidebarProvider>
+                  <AppSidebar />
+                  <main className="flex-1 overflow-auto">
+                    <Outlet />
+                  </main>
+                </SidebarProvider>
+              </ErrorContextProvider>
+            </RoomContextProvider>
+          </TopicContextProvider>
+        </AIModeContextProvider>
       </div>
     </TooltipProvider>
   );

@@ -23,6 +23,7 @@ import { getHomePageStats } from "@/backend/getStats.ts";
 import Searchbar from "@/components/HomePage/Searchbar.tsx";
 
 import { useRoomContext } from "@/context/room_context.ts";
+import { useAIModeContext } from "@/context/ai_mode_context.ts";
 import StatsBar from "@/components/HomePage/StatsBar.tsx";
 
 // Helper function to get time ago
@@ -111,7 +112,7 @@ export default function ChatroomHome() {
   // const [rooms, setRooms] = useState<RoomType[]>([]);
   const { rooms, setRooms } = useRoomContext();
   const [topics, setTopics] = useState<TopicType[]>([]);
-  const [aiStatus, setAiStatus] = useState(false);
+  const { aiStatus } = useAIModeContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -326,34 +327,6 @@ export default function ChatroomHome() {
 
           <div className="lg:col-span-3">
             <div className="max-w-4xl">
-              <div className="flex items-center bg-gray-100 p-1 rounded-xl mb-6 w-fit">
-                <button
-                  onClick={() => setAiStatus(false)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    !aiStatus
-                      ? "bg-white text-indigo-600 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  Normal
-                </button>
-                <button
-                  onClick={() => {
-                    if (!authStatus) {
-                      navigate("/login");
-                    }
-                    setAiStatus(true);
-                  }}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    aiStatus
-                      ? "bg-white text-indigo-600 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  Ask AI
-                </button>
-              </div>
-
               {/* Error Message */}
               {error && (
                 <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
