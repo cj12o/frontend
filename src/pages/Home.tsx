@@ -79,6 +79,7 @@ export default function ChatroomHome() {
   // FOR pagination
   const [nextpageStatus, setNextpageStatus] = useState(false);
   const [prevpageStatus, setPrevpageStatus] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   // const [memberStatus, setMemberStatus] = useState<MemeberStatus[]>([]);
   const navigate = useNavigate();
 
@@ -121,6 +122,7 @@ export default function ChatroomHome() {
         setRooms(resp.results);
         setNextpageStatus(!!resp.next);
         setPrevpageStatus(!!resp.previous);
+        setCurrentPage((prev) => prev + 1);
       } else {
         setRooms([]);
         setError("No more rooms available");
@@ -145,6 +147,7 @@ export default function ChatroomHome() {
         setRooms(resp.results);
         setNextpageStatus(!!resp.next);
         setPrevpageStatus(!!resp.previous);
+        setCurrentPage((prev) => Math.max(1, prev - 1));
       } else {
         setRooms([]);
         setError("No previous rooms available");
@@ -294,6 +297,7 @@ export default function ChatroomHome() {
               selectedTopic={selectedTopic}
               nextpageStatus={nextpageStatus}
               prevpageStatus={prevpageStatus}
+              currentPage={currentPage}
               onError={setError}
               onNextPage={getroomsNext}
               onPrevPage={getroomsPrev}

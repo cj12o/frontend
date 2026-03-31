@@ -82,14 +82,14 @@ function Room() {
   }, [lastJsonMessage]);
 
   return (
-    <div className="h-[calc(100vh-70px)] w-screen overflow-hidden flex flex-col bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100 via-slate-50 to-purple-100">
+    <div className="h-[90vh] w-full overflow-hidden flex flex-col bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100 via-slate-50 to-purple-100">
       {roomInfo != null ? (
         <div className="flex h-full w-full">
           {/* Left Sidebar */}
           <div
             className={`flex flex-col bg-gradient-to-b from-white via-white to-gray-50/50 backdrop-blur-2xl border-r border-gray-200/50 shadow-xl transition-all duration-300 ease-out ${
               sidebarOpen ? "w-80" : "w-20"
-            } overflow-hidden z-20`}
+            } overflow-hidden z-0`}
           >
             {/* Room Info Header */}
             <div className="bg-gradient-to-br from-indigo-50/50 via-purple-50/30 to-white border-b border-gray-200/50 p-5 flex-shrink-0 relative overflow-hidden">

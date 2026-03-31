@@ -9,6 +9,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarTrigger,
+  SidebarFooter
 } from "@/components/ui/sidebar";
 import { useTopicContext } from "@/context/topics_context";
 import { useEffect } from "react";
@@ -16,7 +17,7 @@ import { House, Plus, Hash } from "lucide-react";
 import { roomlist } from "@/backend/room_list";
 import { useRoomContext } from "@/context/room_context";
 import { useErrorContext } from "@/context/error_context";
-
+import SidebarfooterComp from "./sidebarfooter";
 export function AppSidebar() {
   const { topics, setTopics, selectedTopic, setSelectedTopic } =
     useTopicContext();
@@ -91,32 +92,33 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Topics List */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Topics</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
+        <SidebarGroup >
+          <SidebarGroupLabel className="font-bold text-2xl underline">Topics</SidebarGroupLabel>
+          <SidebarGroupContent className="pt-3">
+            <SidebarMenu className="gap-2">
               {topics.map((topic) => (
-                <SidebarMenuItem key={topic.id}>
-                  <SidebarMenuButton tooltip={topic.topic}>
-                    <div className="flex justify-between  items-center">
-                      <div className="flex items-center justify-center">
-                        <Hash className="size-4 " />
-                        <span
-                          className={
-                            selectedTopic === topic.topic
-                              ? "bg-red-300 pr-1 right-0"
-                              : "pr-1"
-                          }
-                          onClick={() => {
+                <SidebarMenuItem key={topic.id} 
+                onClick={() => {
                             setSelectedTopic(topic.topic);
                             gettopicWiseRoom(topic.topic);
                           }}
+                className={selectedTopic===topic.topic?"border-2  border-gray-800 gap-2 ":"border border-b-1 hover:border-2  border-b-gray-800 gap-2 border-t-white border-r-gray-200"}>
+                  <SidebarMenuButton tooltip={topic.topic} className="hover:cursor-pointer hover:shadow-black hover:shadow-b-lg">
+                    <div className="flex justify-between  items-center w-full  hover:shadow-b-lg">
+                      <div className="flex items-center justify-center ">
+                        <Hash className="size-4  rounded-full bg-amber-200 m-2" />
+                        <span
+                          className={
+                            selectedTopic === topic.topic
+                              ? " pr-1 right-0"
+                              : "pr-1"
+                          }
                         >
                           {topic.topic}
                         </span>
                       </div>
 
-                      <span className="p-1 rounded-full shadow-2xl">
+                      <span className="p-1 rounded-full shadow-2xl text-md">
                         {topic.relatedRooms}
                       </span>
                     </div>
@@ -127,6 +129,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarfooterComp />
+      </SidebarFooter>
     </Sidebar>
   );
 }

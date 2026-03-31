@@ -1,4 +1,4 @@
-import { MessageSquare, Hash, Tags, User, Clock } from "lucide-react";
+import { MessageSquare, Hash, Tags, User, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 
 type author = {
   id: number;
@@ -41,6 +41,7 @@ interface RoomListProps {
   selectedTopic: string;
   nextpageStatus: boolean;
   prevpageStatus: boolean;
+  currentPage: number;
   onError: (error: string | null) => void;
   onNextPage: () => void;
   onPrevPage: () => void;
@@ -84,6 +85,7 @@ export default function RoomList({
   selectedTopic,
   nextpageStatus,
   prevpageStatus,
+  currentPage,
   onError,
   onNextPage,
   onPrevPage,
@@ -124,8 +126,9 @@ export default function RoomList({
               rooms.map((room) => (
                 <div
                   key={room.id}
-                  className="flex bg-white shadow-sm border border-gray-100 p-3 hover:shadow-lg hover:border-indigo-200 transition-all duration-200 cursor-pointer group hover:-translate-y-1"
+                  className="w-full bg-white shadow-sm border border-gray-100 p-3 hover:shadow-lg hover:border-indigo-200 transition-all duration-200 cursor-pointer group hover:-translate-y-1"
                 >
+                  <div className="w-full"></div>
                   <div className="flex items-start justify-between mb-1.5">
                     <div className="flex-1">
                       {room.reason && (
@@ -286,7 +289,7 @@ export default function RoomList({
                         </div>
 
                         {/* Last Activity */}
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1 ">
                           <Clock className="w-3 h-3 text-gray-400" />
                           <span className="font-medium text-gray-700">
                             {getTimeAgo(room.updated_at)}
@@ -305,7 +308,7 @@ export default function RoomList({
                       </button>
                     ) : room.is_private ? (
                       <button
-                        className={`px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition shadow-sm ${
+                        className={`ml-auto px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition shadow-sm ${
                           room.has_pending_request
                             ? "opacity-50 cursor-not-allowed"
                             : ""
@@ -362,28 +365,55 @@ export default function RoomList({
 
             {/* Pagination */}
             {(prevpageStatus || nextpageStatus) && (
-              <div className="flex items-center justify-center space-x-4 mt-8">
+              <div className="flex items-center justify-center gap-2 mt-8">
                 <button
                   onClick={onPrevPage}
                   disabled={!prevpageStatus}
-                  className={`px-4 py-2 rounded-lg font-medium transition ${
+                  className={`p-2 rounded-lg font-medium transition ${
                     prevpageStatus
                       ? "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm"
                       : "bg-gray-50 text-gray-400 cursor-not-allowed"
                   }`}
+                  title="Previous page"
                 >
-                  Previous
+                  <ChevronLeft className="w-5 h-5" />
                 </button>
+
+                <div className="flex items-center gap-2 px-4">
+                  <span className="text-sm font-medium text-gray-700">
+                    Page {currentPage}
+                  </span>
+                  <div className="flex gap-1.5">
+                    {[1, 2, 3].map((dot) => (
+                      <div
+                        key={dot}
+                        className={`w-2 h-2 rounded-full transition ${
+                          dot === 1
+                            ? "bg-indigo-600"
+                            : dot === 2
+                              ? currentPage >= 2
+                                ? "bg-indigo-400"
+                                : "bg-gray-300"
+                              : currentPage >= 3
+                                ? "bg-indigo-400"
+                                : "bg-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
                 <button
                   onClick={onNextPage}
                   disabled={!nextpageStatus}
-                  className={`px-4 py-2 rounded-lg font-medium transition ${
+                  className={`p-2 rounded-lg font-medium transition ${
                     nextpageStatus
                       ? "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm"
                       : "bg-gray-50 text-gray-400 cursor-not-allowed"
                   }`}
+                  title="Next page"
                 >
-                  Next
+                  <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
             )}
