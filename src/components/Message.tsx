@@ -10,9 +10,11 @@ import {
   ChevronUp,
   MessageCircle,
   Trash2,
+  Pencil,
   X,
   CornerDownRight,
   MoreHorizontal,
+  Send
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { deleteMsg, getMsg } from "@/backend/message";
@@ -302,44 +304,48 @@ function Message() {
       );
 
       return (
-        <>
+        <div className="flex flex-col group">
+          <div>
           {comment.hasPoll ? (
             <div className="mt-4">
               <PollComp id={Number(comment.id)} room_id={Number(id)} />
             </div>
           ) : (
-            <div className="group bg-white rounded-lg mb-1.5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+            <div className="group bg-white/90 backdrop-blur-sm rounded-4xl border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
               <div className="flex items-start p-2 gap-2">
                 {/* Votes section */}
-                <div className="flex flex-col items-center gap-0.5 bg-gray-50 rounded-lg p-0.5 min-w-[32px]">
-                  <button
-                    onClick={() => {
-                      isUpvoted
-                        ? handleVote(comment.id, "upvote", "subtractVote")
-                        : handleVote(comment.id, "upvote", "addVote");
-                    }}
-                    className={`p-0.5 rounded transition-all duration-200 ${
-                      isUpvoted
-                        ? "text-orange-500 bg-orange-50"
-                        : "text-gray-400 hover:text-gray-600 hover:bg-gray-200"
-                    }`}
-                  >
+                <div className="flex  items-center gap-1 bg-gray-50/80 rounded-lg p-1 min-w-[40px]">
+                  <div className="flex">
+                    {/* {upvote} */}
+                    <div className="flex">
+                      <button
+                        onClick={() => {
+                          isUpvoted
+                            ? handleVote(comment.id, "upvote", "subtractVote")
+                            : handleVote(comment.id, "upvote", "addVote");
+                        }}
+                        className={`p-0.5 rounded transition-all duration-200 ${
+                          isUpvoted
+                            ? "text-orange-500 bg-orange-50"
+                            : "text-gray-400 hover:text-gray-600 hover:bg-gray-200"
+                        }`}
+                      >
                     <ChevronUp className="w-3 h-3" strokeWidth={2.5} />
                   </button>
-
-                  <span
-                    className={`text-[10px] font-bold ${
-                      isUpvoted
-                        ? "text-orange-500"
-                        : isDownvoted
-                          ? "text-indigo-500"
-                          : "text-gray-600"
-                    }`}
-                  >
-                    {comment.upvotes - comment.downvotes}
-                  </span>
-
-                  <button
+                    <span
+                        className={`text-[10px] font-bold ${
+                          isUpvoted
+                            ? "text-orange-500"
+                            : isDownvoted
+                              ? "text-indigo-500"
+                              : "text-gray-600"
+                        }`}
+                      >
+                        {comment.upvotes}
+                      </span>
+                  </div>
+                  <div className="flex">
+                    <button
                     onClick={() => {
                       isDownvoted
                         ? handleVote(comment.id, "downvote", "subtractVote")
@@ -353,23 +359,35 @@ function Message() {
                   >
                     <ChevronDown className="w-3 h-3" strokeWidth={2.5} />
                   </button>
+                    <span
+                        className={`text-[10px] font-bold ${
+                          isUpvoted
+                            ? "text-orange-500"
+                            : isDownvoted
+                              ? "text-indigo-500"
+                              : "text-gray-600"
+                        }`}
+                      >
+                        {comment.upvotes}
+                      </span>
+                  </div>
+                  </div>
                 </div>
 
                 {/* Comment content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
+                <div className="flex-1 w-full h-full bg-amber-100">
+                  <div className="mr-1 bg-green-500 break-words">
                     <Link
                       to={`/profile/${comment.author}`}
-                      className="text-xs font-semibold text-gray-900 hover:text-indigo-600 transition-colors flex items-center gap-1.5"
+                      className="text-xs font-semibold text-gray-900 hover:text-indigo-600 transition-colors inline-flex items-center gap-1.5 align-middle mr-1"
                     >
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-[9px] text-indigo-600 overflow-hidden">
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-[9px] text-indigo-600 overflow-hidden shrink-0">
                         {comment.profile_pic ? (
                           <img
                             src={comment.profile_pic}
                             alt={comment.author}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover border-1 border-gray-200"
                             onError={(e) => {
-                              // Fallback to initial avatar if image fails to load
                               e.currentTarget.style.display = "none";
                               const parent = e.currentTarget.parentElement;
                               if (parent) {
@@ -383,25 +401,17 @@ function Message() {
                           comment.author.charAt(0).toUpperCase()
                         )}
                       </div>
-                      {comment.author}
+                      <span className="leading-snug">
+                        {comment.author}
+                      </span>
                     </Link>
-
-                    {/* Actions Menu */}
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      {comment.author === localStorage.getItem("name") && (
-                        <button
-                          onClick={() => deleteMessage(Number(id), comment.id)}
-                          className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                          title="Delete message"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
+                    <span className="bg-amber-300 text-sm">
+                      {comment.message}
+                    </span>
                   </div>
 
-                  <div className="text-gray-700 leading-snug break-words space-y-1 text-xs">
-                    <p>{comment.message}</p>
+                  <div className="text-black leading-snug break-words space-y-1 text-xs">
+                    
 
                     {/* If there's an image */}
                     {comment.images_msg && (
@@ -436,27 +446,13 @@ function Message() {
                   </div>
 
                   {/* Footer Actions */}
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <button
-                      onClick={() => setInputBoxNeeded((prev) => !prev)}
-                      className={`flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded transition-all duration-200 ${
-                        inputBoxNeeded
-                          ? "bg-indigo-50 text-indigo-600"
-                          : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                      }`}
-                    >
-                      {inputBoxNeeded ? (
-                        <X className="w-2.5 h-2.5" />
-                      ) : (
-                        <MessageCircle className="w-2.5 h-2.5" />
-                      )}
-                      {inputBoxNeeded ? "Cancel" : "Reply"}
-                    </button>
+                  <div className="flex items-center gap-2 mt-2 bg-amber-800">
+                    
 
                     {comment.children.length > 0 && (
                       <button
                         onClick={() => toggleExpand(comment.id)}
-                        className="flex items-center gap-0.5 text-[10px] font-medium text-gray-500 hover:text-indigo-600 transition-colors px-1.5 py-0.5 rounded hover:bg-indigo-50"
+                        className="flex items-center gap-0.5 text-[11px] font-medium text-gray-500 hover:text-indigo-700 transition-all px-2 py-1 rounded-lg hover:bg-indigo-100/50"
                       >
                         {expanded ? (
                           <>
@@ -473,7 +469,7 @@ function Message() {
                     )}
                   </div>
 
-                  {inputBoxNeeded && (
+                  {/* {inputBoxNeeded && (
                     <form
                       onSubmit={(e) => {
                         e.preventDefault();
@@ -481,29 +477,29 @@ function Message() {
                         setInputComment("");
                         setInputBoxNeeded(false);
                       }}
-                      className="mt-2 flex gap-1.5 animate-in fade-in slide-in-from-top-2 duration-200"
+                      className="mt-3 flex gap-2 animate-in fade-in slide-in-from-top-2 duration-200"
                     >
                       <input
                         type="text"
                         placeholder="Write a reply..."
-                        className="flex-1 px-2 py-1 bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-xs"
+                        className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-xs placeholder-gray-400"
                         value={inputComment}
                         onChange={(e) => setInputComment(e.target.value)}
                         autoFocus
                       />
                       <button
                         type="submit"
-                        className="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition-all duration-200 font-medium text-[10px] shadow-sm hover:shadow-indigo-500/30 active:scale-95"
+                        className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 font-medium text-xs shadow-sm hover:shadow-md hover:shadow-indigo-500/30 active:scale-95"
                       >
                         Send
                       </button>
                     </form>
-                  )}
+                  )} */}
                 </div>
               </div>
 
               {expanded && comment.children.length > 0 && (
-                <div className="bg-gray-50/50 border-t border-gray-100 p-2 pl-4 space-y-1.5">
+                <div className="bg-gray-50/60 border-t border-gray-200/30 p-3 pl-5 space-y-3">
                   {comment.children.map((rep) => (
                     <RenderComment comment={rep} margin={margin} key={rep.id} />
                   ))}
@@ -511,16 +507,76 @@ function Message() {
               )}
             </div>
           )}
-        </>
+          </div>
+
+          <div className="w-full ml-auto flex  gap-2 mr-5 h-1 overflow-visible justify-center items-center z-10">
+              <div className="w-full">
+                {inputBoxNeeded && (
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        handleForm(comment.id, inputComment);
+                        setInputComment("");
+                        setInputBoxNeeded(false);
+                      }}
+                      className="mt-2 flex  animate-in fade-in slide-in-from-top-2 duration-200"
+                    >
+                      <input
+                        type="text"
+                        placeholder="Write a reply..."
+                        className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-xs placeholder-gray-400"
+                        value={inputComment}
+                        onChange={(e) => setInputComment(e.target.value)}
+                        autoFocus
+                      />
+                      {/* <button
+                        type="submit"
+                        className=" bg-indigo-600 hover:bg-indigo-700 text-white transition-all duration-200 font-medium text-xs shadow-sm hover:shadow-md hover:shadow-indigo-500/30 active:scale-95"
+                      > */}
+                        <Send size={28} className="rounded-full bg-amber-600" type="submit"/>
+                      {/* </button> */}
+                    </form>
+                  )}
+              </div>
+              <div className="p-1">
+                <button
+                  onClick={() => deleteMessage(Number(id), comment.id)}
+                  className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                  title="Delete message"
+                >
+                   <Trash2 size={16}/>
+                  </button>
+              </div>
+              <div className="p-1">
+                <Pencil size={15} className=" bg-white"/>
+              </div>
+              <div className="p-1">
+                 <button
+                      onClick={() => setInputBoxNeeded((prev) => !prev)}
+                      className={`flex items-center gap-0.5 text-[11px] font-medium px-2 py-1 rounded-lg transition-all duration-200 ${
+                        inputBoxNeeded
+                          ? "bg-indigo-100/60 text-indigo-700"
+                          : "text-gray-500 hover:bg-gray-100/80 hover:text-gray-700"
+                      }`}
+                    >
+                      {inputBoxNeeded ? (
+                        <X className="w-2.5 h-2.5" />
+                      ) : (
+                        <MessageCircle size={15} />
+                      )}
+                    </button>
+              </div>
+          </div>
+        </div>
       );
     },
   );
 
   return (
-    <div className="flex flex-col h-screen bg-transparent">
-      <div className="flex-1 overflow-y-auto p-4 pb-24 custom-scrollbar">
+    <div className="flex flex-col h-full bg-transparent">
+      <div className="flex-1 overflow-y-auto p-6 pb-4 custom-scrollbar">
         <ExpandedContext.Provider value={{ getExpanded, toggleExpand }}>
-          <div className="max-w-4xl mx-auto space-y-3">
+          <div className="max-w-4xl mx-auto space-y-3.5">
             {comments.map((c) => (
               <RenderComment comment={c} margin={1} key={c.id} />
             ))}
