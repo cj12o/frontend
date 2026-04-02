@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getSuggestion } from "@/backend/suggestion";
-import { Search, X, Hash, MessageSquare } from "lucide-react";
-import Button from "../Button";
+import { Search, Hash} from "lucide-react";
 
-const highlightText = (text, query) => {
+const highlightText = (text: string, query: string) => {
   if (!query) return text;
 
   const parts = text.split(new RegExp(`(${query})`, "gi"));
@@ -19,13 +18,13 @@ const highlightText = (text, query) => {
   );
 };
 
-const Searchbar = ({ value }) => {
+const Searchbar = ({ value}:{value: any}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [options, setOptions] = useState<string[][]>([]);
   const [typingTimeout, setTypingTimeout] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const { queryforDynamicSearch, setQueryforDynamicSearch } = value;
+  const { setQueryforDynamicSearch } = value;
 
   const get_suggestions = async () => {
     if (!searchQuery.trim()) {
@@ -68,11 +67,11 @@ const Searchbar = ({ value }) => {
     setIsFocused(false);
   };
 
-  const clearSearch = () => {
-    setSearchQuery("");
-    setOptions([]);
-    setQueryforDynamicSearch({ need: -1, keyword: "" });
-  };
+  // const clearSearch = () => {
+  //   setSearchQuery("");
+  //   setOptions([]);
+  //   setQueryforDynamicSearch({ need: -1, keyword: "" });
+  // };
 
   return (
     <div className="w-full">

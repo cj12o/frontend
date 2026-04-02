@@ -1,30 +1,29 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createContext, useContext } from "react";
 import App from "./App.js";
 import {
-  BrowserRouter,
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
-import useWebSocket from "react-use-websocket";
+
 
 import Login from "./pages/Login.tsx";
 import Signup from "./pages/Signup.tsx";
 import Home from "./pages/Home.tsx";
 import Profile from "./pages/Profile.tsx";
-import Form from "./pages/Form.tsx";
+
 import RoomWrapper from "./pages/RoomWrapper.tsx";
 // import Chatbot from './pages/Chatbot.tsx'
-import Poll from "./components/Poll.tsx";
+// import Poll from "./components/Poll.tsx";
 import Roomcreation from "./pages/Roomcreation.tsx";
 import Notification from "./pages/Notification.tsx";
 
 import RoomEdit from "./pages/RoomEdit.tsx";
 import Moderator from "./pages/Moderator.tsx";
-import Moderation_messages from "./pages/moderation_messages.tsx";
+import Moderation_messages from "./pages/Moderation_messages.tsx";
+
 
 const router = createBrowserRouter([
   {
@@ -37,7 +36,7 @@ const router = createBrowserRouter([
       { path: "/profile/:name", element: <Profile /> },
       { path: "/createRoom", element: <Roomcreation /> },
       { path: "/rooms/:id/messages", element: <RoomWrapper /> },
-      { path: "/polls/:id/", element: <Poll id={2} /> },
+      // { path: "/polls/:id/", element: <Poll id={2} /> },
       { path: "/notifications", element: <Notification /> },
       { path: "/rooms/:id/edit", element: <RoomEdit /> },
       { path: "/moderator", element: <Moderator /> },

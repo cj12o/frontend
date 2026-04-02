@@ -2,10 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import { ChatbotContext } from "@/pages/Chatbot";
 import { Send, Sparkles } from "lucide-react";
-import { useParams } from "react-router-dom";
 
 function Chatbot_reply({ id }: { id: number }) {
-  console.log(`WS URL ws://127.0.0.1:8000/ws/chatbot/${id}/`);
+  // console.log(`WS URL ws://127.0.0.1:8000/ws/chatbot/${id}/`);
   const { sendMessage, lastMessage } = useWebSocket(
     `ws://127.0.0.1:8000/ws/chatbot/${id}/?token=${
       localStorage.getItem("cookie") || ""
@@ -30,7 +29,7 @@ function Chatbot_reply({ id }: { id: number }) {
       if (JSON.parse(lastMessage.data)?.status === "done") {
         return;
       }
-      const id = JSON.parse(lastMessage.data)["id"];
+      const id = String(JSON.parse(lastMessage.data)["id"])
 
       if (
         lastMessage?.data != "done" &&

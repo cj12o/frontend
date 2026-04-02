@@ -1,7 +1,7 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { Button } from "./index.js";
 import { useDispatch, useSelector } from "react-redux";
-import { logout as reducerLogout } from "../store/authSlice.js";
+// import { logout as reducerLogout } from "../store/authSlice.js";
 import { useNavigate } from "react-router-dom";
 import { logout as logoutBackend } from "../backend/auth.js";
 
@@ -15,11 +15,11 @@ function LogoutBtn() {
   const visitedRoomsRef = useRef(visitedRooms);
   visitedRoomsRef.current = visitedRooms;
 
-  const [error, setError] = useState("");
+  const [_error, setError] = useState("");
 
   const logoutHandler = async () => {
     try {
-      const resp = await logoutBackend(dispatch, visitedRoomsRef);
+      await logoutBackend(dispatch, visitedRoomsRef);
       console.log("Suggesfully logged out");
       navigate("/");
     } catch (e: any) {

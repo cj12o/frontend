@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createContext, useContext } from "react";
+import { createContext} from "react";
 import useWebSocket from "react-use-websocket";
 
 const WebSocketContext = createContext<any>(null);

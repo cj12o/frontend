@@ -45,7 +45,6 @@ const getMsg = async (roomid: number) => {
 
 const deleteMsg = async (roomid: number, message_id: number) => {
   try {
-    const data = { id: roomid };
     const resp = await axios.delete(
       import.meta.env.VITE_BASE_EPT +
         `rooms/${roomid}/messages/?id=${message_id}`,

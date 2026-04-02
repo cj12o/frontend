@@ -21,8 +21,8 @@ import SidebarfooterComp from "./sidebarfooter";
 export function AppSidebar() {
   const { topics, setTopics, selectedTopic, setSelectedTopic } =
     useTopicContext();
-  const { rooms, setRooms } = useRoomContext();
-  const { error, setError } = useErrorContext();
+  const { setRooms } = useRoomContext();
+  const { setError } = useErrorContext();
 
   const get_topics = async () => {
     try {

@@ -1,23 +1,23 @@
-type author = {
+export type Author = {
   id: number;
   name: string;
 };
-type member = {
+export type Member = {
   member_name?: string;
   member_id: number;
   profile_image?: string | null;
 };
-type moderator = {
+export type Moderator = {
   id: number;
   username: string;
 };
-type RoomType = {
+export type RoomType = {
   id: string;
-  author: author;
+  author: Author;
   parent_topic: string;
   isMember: boolean;
-  members: member[];
-  moderator: moderator[];
+  members: Member[];
+  moderator: Moderator[];
   name: string;
   description: string;
   topic: string;
@@ -29,10 +29,10 @@ type RoomType = {
   has_pending_request: boolean;
 };
 
-type TopicType = {
+export type TopicType = {
   id: number;
   topic: string;
   relatedRooms: number;
 };
 
-export { type RoomType, type TopicType };
+

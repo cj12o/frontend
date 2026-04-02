@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "./Button.js";
 import { useNavigate } from "react-router-dom";
 import { signup as signupBackend } from "../backend/auth.ts";
-import { useDispatch } from "react-redux";
+
 
 function Signup() {
   const [email, setEmail] = useState("");

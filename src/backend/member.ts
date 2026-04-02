@@ -3,7 +3,7 @@ import axios from "axios";
 const addMember = async (roomid: number) => {
   console.log(`Token ${localStorage.getItem("cookie")}`);
   try {
-    const resp = await axios.patch(
+    await axios.patch(
       import.meta.env.VITE_MEMBER_EPT + `${roomid}/`,
       {},
       {
@@ -19,7 +19,7 @@ const addMember = async (roomid: number) => {
 const delMember = async (roomid: number) => {
   console.log(`Token ${localStorage.getItem("cookie")}`);
   try {
-    const resp = await axios.delete(
+    await axios.delete(
       import.meta.env.VITE_MEMBER_EPT + `${roomid}/`,
       {
         headers: {

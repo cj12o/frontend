@@ -1,5 +1,3 @@
-import React from "react";
-import { Button } from "../components/index";
 // {
 //     "name":"zey",
 //     "description": "dicuss regarding ipl",

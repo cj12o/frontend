@@ -7,13 +7,15 @@ import { useState, useRef } from "react";
 import { Bell } from "lucide-react";
 import NotificationList from "@/pages/Notification.js";
 import { getNotificationCount } from "@/backend/notification.ts";
-import { ChevronRight, LogOutIcon, LogInIcon } from "lucide-react";
+import { ChevronRight,LogInIcon } from "lucide-react";
 
 function Header() {
   const [dropDownStatus, setDropDownStatus] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [namedisplay, setNamedisplay] = useState();
+  const [hideHeader, setHideHeader] = useState(false);
+  const lastScrollRef = useRef(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Redux Selectors (Typed safely)
@@ -70,6 +72,30 @@ function Header() {
   }, [lastJsonMessage]);
 
   useEffect(() => {
+    const handleScroll = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (!target || !target.scrollTop && target.scrollTop !== 0) return;
+
+      const currentScroll = target === document.documentElement || target === document.body
+        ? window.scrollY
+        : target.scrollTop;
+
+      if (Math.abs(currentScroll - lastScrollRef.current) < 10) return;
+
+      if (currentScroll > lastScrollRef.current && currentScroll > 60) {
+        setHideHeader(true);
+      } else {
+        setHideHeader(false);
+      }
+
+      lastScrollRef.current = currentScroll;
+    };
+
+    document.addEventListener("scroll", handleScroll, true);
+    return () => document.removeEventListener("scroll", handleScroll, true);
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -103,8 +129,8 @@ function Header() {
 
   return (
     <>
-      {/* Sticky Header with blur effect */}
-      <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md h-14">
+      {/* Fixed Header with blur effect */}
+      <header className={`top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md h-14 transition-transform duration-300 ${hideHeader ? "-translate-y-full" : "translate-y-0"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
           <div className="flex h-full items-center justify-between">
             {/* Logo Section */}
@@ -235,6 +261,7 @@ function Header() {
           </div>
         </div>
       </header>
+      
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed top-24 right-5 z-50 animate-in fade-in slide-in-from-right-5 duration-300">

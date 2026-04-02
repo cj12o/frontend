@@ -29,7 +29,7 @@ const NotificationList: React.FC = () => {
     "notifications",
   );
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [,setError] = useState<string | null>(null);
 
   // WebSocket Configuration
   // Note: In a real app, manage this token securely.

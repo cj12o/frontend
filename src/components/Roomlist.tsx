@@ -1,22 +1,12 @@
-import React from "react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { roomlist } from "@/backend/room_list";
 import { Link } from "react-router-dom";
 import {
-  MessageSquare,
-  Plus,
-  Search,
-  Users,
-  TrendingUp,
-  Hash,
   Clock,
   User,
-  LogIn,
-  UserPlus,
   Tags,
 } from "lucide-react";
+
 
 const Roomlist = () => {
   type author = {
@@ -44,15 +34,10 @@ const Roomlist = () => {
     created_at: string;
     updated_at: string;
   };
-  type TopicType = {
-    id: number;
-    topic: string;
-  };
 
   const [rooms, setRooms] = useState<RoomType[]>([]);
-  const [topics, setTopics] = useState<TopicType[]>([]);
+  // const [topics, setTopics] = useState<TopicType[]>([]);
 
-  const navigate = useNavigate();
 
   const getrooms = async () => {
     try {
@@ -62,9 +47,6 @@ const Roomlist = () => {
       console.log(e);
     }
   };
-
-  const dispatch: any = useDispatch();
-  //Todo :room to redux
 
   useEffect(() => {
     getrooms();

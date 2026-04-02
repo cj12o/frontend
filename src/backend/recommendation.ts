@@ -16,7 +16,7 @@ const getRecommendations = async () => {
 
 const SaveRecommendation = async () => {
   try {
-    const resp = await axios.post(
+    await axios.post(
       import.meta.env.VITE_RECOM_EPT,
       {
         sessionId: localStorage.getItem("sessionId"),

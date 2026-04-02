@@ -1,5 +1,3 @@
-import React from "react";
-
 function Button({ className = "text-white", value = "button", ...props }) {
   return (
     <button

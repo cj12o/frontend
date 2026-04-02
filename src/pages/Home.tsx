@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { roomlist, roomlistpost, roomlistprev } from "../backend/room_list.ts";
 import { requestJoin } from "../backend/join_request.ts";
-import { useLocation } from "react-router-dom";
-import { addtoHistory } from "@/store/authSlice.ts";
+
+// import { addtoHistory } from "@/store/authSlice.ts";
 import { getTopics } from "@/backend/topic.ts";
-import { useDispatch, useSelector } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
 import { getRecommendations } from "@/backend/recommendation.ts";
 import { delMember, addMember } from "@/backend/member.ts";
@@ -59,19 +59,14 @@ export default function ChatroomHome() {
     need: number;
     keyword: string;
   };
-  type HomePageStats = {
-    room_count: number;
-    online_users_count: number;
-    message_count: number;
-    total_users_count: number;
-  };
-  const authStatus = useSelector((state: any) => state.authStatus);
+  
+  // const authStatus = useSelector((state: any) => state.authStatus);
   const [queryforDynamicSearch, setQueryforDynamicSearch] =
     useState<dataForDynamicQuery>({ need: -1, keyword: "" });
-  const [selectedTopic, setSelectedTopic] = useState("all");
+  const [selectedTopic, _setSelectedTopic] = useState("all");
   // const [rooms, setRooms] = useState<RoomType[]>([]);
   const { rooms, setRooms } = useRoomContext();
-  const [topics, setTopics] = useState<TopicType[]>([]);
+  const [_topics, setTopics] = useState<TopicType[]>([]);
   const { aiStatus } = useAIModeContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -114,10 +109,7 @@ export default function ChatroomHome() {
     setLoading(true);
     setError(null);
     try {
-      const resp = await roomlistpost(
-        queryforDynamicSearch?.need || -1,
-        queryforDynamicSearch?.keyword || "",
-      );
+      const resp = await roomlistpost();
       if (resp && resp.results) {
         setRooms(resp.results);
         setNextpageStatus(!!resp.next);
@@ -139,10 +131,7 @@ export default function ChatroomHome() {
     setLoading(true);
     setError(null);
     try {
-      const resp = await roomlistprev(
-        queryforDynamicSearch?.need || -1,
-        queryforDynamicSearch?.keyword || "",
-      );
+      const resp = await roomlistprev();
       if (resp && resp.results) {
         setRooms(resp.results);
         setNextpageStatus(!!resp.next);
@@ -194,27 +183,27 @@ export default function ChatroomHome() {
     }
   };
 
-  const topicWiseRoom = async (topic: string) => {
-    //for parent topic
-    setLoading(true);
-    setError(null);
-    try {
-      const resp = await roomlist(2, topic);
-      if (resp && resp.results) {
-        setRooms(resp.results);
-        setSelectedTopic(topic);
-      } else {
-        setRooms([]);
-        setError(`No rooms found for topic: ${topic}`);
-      }
-    } catch (e: any) {
-      console.error("Error fetching topic rooms:", e);
-      setError(e.message || `Failed to load rooms for topic: ${topic}`);
-      setRooms([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const topicWiseRoom = async (topic: string) => {
+  //   //for parent topic
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const resp = await roomlist(2, topic);
+  //     if (resp && resp.results) {
+  //       setRooms(resp.results);
+  //       setSelectedTopic(topic);
+  //     } else {
+  //       setRooms([]);
+  //       setError(`No rooms found for topic: ${topic}`);
+  //     }
+  //   } catch (e: any) {
+  //     console.error("Error fetching topic rooms:", e);
+  //     setError(e.message || `Failed to load rooms for topic: ${topic}`);
+  //     setRooms([]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleRequestJoin = async (room_id: string) => {
     try {
@@ -232,11 +221,11 @@ export default function ChatroomHome() {
     }
   };
 
-  const dispatch: any = useDispatch();
-  //Todo :room to redux
+  // const dispatch: any = useDispatch();
+  // //Todo :room to redux
 
-  const location = useLocation();
-  const extraclass = "bg-white";
+  // const location = useLocation();
+  // const extraclass = "bg-white";
 
   useEffect(() => {
     if (aiStatus == false) {

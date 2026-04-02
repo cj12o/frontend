@@ -37,7 +37,7 @@ const roomlist = async (need: number = -1, keyword: string = "") => {
   }
 };
 
-const roomlistpost = async (need: number, keyword: string) => {
+const roomlistpost = async () => {
   try {
     const url = posturl || import.meta.env.VITE_ROOMLST_EPT;
 
@@ -68,7 +68,7 @@ const roomlistpost = async (need: number, keyword: string) => {
   }
 };
 
-const roomlistprev = async (need: number, keyword: string) => {
+const roomlistprev = async () => {
   try {
     const url = preurl || import.meta.env.VITE_ROOMLST_EPT;
 
