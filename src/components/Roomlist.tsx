@@ -54,8 +54,8 @@ const Roomlist = () => {
   }, []);
 
   return (
-    <div className="lg:col-span-3">
-      <div className="space-y-4">
+    <div className="lg:col-span-3 bg-amber-300">
+      <div className="space-y-4 bg-amber-900">
         {rooms.length > 0 ? (
           rooms.map((room) => (
             <div
