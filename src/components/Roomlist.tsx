@@ -54,13 +54,13 @@ const Roomlist = () => {
   }, []);
 
   return (
-    <div className="lg:col-span-3 bg-amber-300">
-      <div className="space-y-4 bg-amber-900">
+    <div className="lg:col-span-3">
+      <div className="space-y-4 ">
         {rooms.length > 0 ? (
           rooms.map((room) => (
             <div
               key={room.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:border-indigo-200 transition cursor-pointer group"
+              className="bg-white w-full rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:border-indigo-200 transition cursor-pointer group"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">

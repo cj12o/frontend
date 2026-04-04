@@ -278,7 +278,7 @@ export default function ChatroomHome() {
         <div className="flex mx-auto gap-3 px-10">
           {/* Main Content - Room List */}
 
-          <div className="px-4">
+          <div className="px-4  w-full">
             <RoomList
               rooms={rooms}
               loading={loading}
