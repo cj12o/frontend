@@ -97,24 +97,32 @@ export function AppSidebar() {
           <SidebarGroupContent className="pt-3">
             <SidebarMenu className="gap-2">
 
-              <div className="flex justify-between  items-center w-full  hover:shadow-b-lg">
-                <div className="flex items-center justify-center ">
-                  <Hash className="size-4  rounded-full bg-amber-200 m-2" />
-                  <span
-                    className={
-                      selectedTopic === "all"
-                        ? " pr-1 right-0"
-                        : "pr-1"
-                    }
-                  >
-                    {"All Topics"}
-                  </span>
-                </div>
+              <SidebarMenuItem
+                onClick={() => {
+                  setSelectedTopic("all");
+                }}
+                className={selectedTopic === "all" ? "border-2  border-gray-800 gap-2 " : "border border-b-1 hover:border-2  border-b-gray-800 gap-2 border-t-white border-r-gray-200"}>
+                <SidebarMenuButton tooltip="All Topics" className="hover:cursor-pointer hover:shadow-black hover:shadow-b-lg">
+                  <div className="flex justify-between  items-center w-full  hover:shadow-b-lg">
+                    <div className="flex items-center justify-center ">
+                      <Hash className="size-4  rounded-full bg-amber-200 m-2" />
+                      <span
+                        className={
+                          selectedTopic === "all"
+                            ? " pr-1 right-0"
+                            : "pr-1"
+                        }
+                      >
+                        {"All Topics"}
+                      </span>
+                    </div>
 
-                <span className="p-1 rounded-full shadow-2xl text-md">
-                  {topics.length}
-                </span>
-              </div>
+                    <span className="p-1 rounded-full shadow-2xl text-md">
+                      {topics.length}
+                    </span>
+                  </div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
               {topics.map((topic) => (
                 <SidebarMenuItem key={topic.id} 
