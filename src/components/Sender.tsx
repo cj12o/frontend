@@ -35,7 +35,7 @@ export const Sender = () => {
   };
 
   return (
-    <div className="px-5  max-w-2xl mx-auto w-full bg-amber-400">
+    <div className="px-5 mx-auto w-full rounded-4xl ">
       {/* Preview Area */}
       {(file || image) && (
         <div className="flex gap-2.5 mb-3 px-1">

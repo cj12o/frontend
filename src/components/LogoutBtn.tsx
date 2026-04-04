@@ -3,7 +3,7 @@ import { Button } from "./index.js";
 import { useDispatch, useSelector } from "react-redux";
 // import { logout as reducerLogout } from "../store/authSlice.js";
 import { useNavigate } from "react-router-dom";
-import { logout as logoutBackend } from "../backend/auth.js";
+import { logout as logoutBackend } from "../backend/auth.ts";
 
 function LogoutBtn() {
   const dispatch = useDispatch();
@@ -17,16 +17,19 @@ function LogoutBtn() {
 
   const [_error, setError] = useState("");
 
-  const logoutHandler = async () => {
+  const logoutHandler = async() => {
     try {
-      await logoutBackend(dispatch, visitedRoomsRef);
-      console.log("Suggesfully logged out");
+      await logoutBackend(dispatch, visitedRoomsRef.current);
+      alert("Suggesfully logged out");
       navigate("/");
     } catch (e: any) {
       setError(e.message);
     }
   };
-  return <Button onClick={logoutHandler} value="Logout"></Button>;
+  return <Button onClick={(e:any)=>{
+    e.preventDefault();
+    logoutHandler();
+  }} value="Logout"></Button>;
 }
 
 export default LogoutBtn;

@@ -479,8 +479,8 @@ function Message() {
           )}
           </div>
 
-          <div className="w-full flex gap-1.5 h-1 overflow-visible justify-end items-center z-10 pr-2">
-              <div className="flex-1">
+          <div className="opacity-0 hover:opacity-100 group w-full flex gap-1.5 h-1 overflow-visible justify-end items-center z-10 pr-2">
+              <div className="flex-1 group-hover:opacity-100">
                 {inputBoxNeeded && (
                     <form
                       onSubmit={(e) => {
@@ -507,20 +507,20 @@ function Message() {
               </div>
               <button
                 onClick={() => deleteMessage(Number(id), comment.id)}
-                className="p-1.5 text-gray-400 hover:text-red-500 bg-white/90 hover:bg-red-50 rounded-lg shadow-sm shadow-red-100/30 hover:shadow-md hover:shadow-red-200/40 transition-all duration-200 active:scale-95 border border-gray-100 hover:border-red-200"
+                className="group-hover:visible p-1.5 text-gray-400 hover:text-red-500 bg-white/90 hover:bg-red-50 rounded-lg shadow-sm shadow-red-100/30 hover:shadow-md hover:shadow-red-200/40 transition-all duration-200 active:scale-95 border border-gray-100 hover:border-red-200"
                 title="Delete message"
               >
                 <Trash2 size={14} />
               </button>
               <button
-                className="p-1.5 text-gray-400 hover:text-blue-600 bg-white/90 hover:bg-blue-50 rounded-lg shadow-sm shadow-blue-100/30 hover:shadow-md hover:shadow-blue-200/40 transition-all duration-200 active:scale-95 border border-gray-100 hover:border-blue-200"
+                className="group-hover:visible p-1.5 text-gray-400 hover:text-blue-600 bg-white/90 hover:bg-blue-50 rounded-lg shadow-sm shadow-blue-100/30 hover:shadow-md hover:shadow-blue-200/40 transition-all duration-200 active:scale-95 border border-gray-100 hover:border-blue-200"
                 title="Edit message"
               >
                 <Pencil size={14} />
               </button>
               <button
                 onClick={() => setInputBoxNeeded((prev) => !prev)}
-                className={`p-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 active:scale-95 border ${
+                className={`group-hover:visible p-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 active:scale-95 border ${
                   inputBoxNeeded
                     ? "bg-indigo-100 text-indigo-700 shadow-indigo-200/50 border-indigo-200"
                     : "text-gray-400 bg-white/90 hover:bg-indigo-50 hover:text-indigo-600 shadow-indigo-100/30 hover:shadow-indigo-200/40 border-gray-100 hover:border-indigo-200"

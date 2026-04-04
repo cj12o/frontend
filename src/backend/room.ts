@@ -95,4 +95,15 @@ const updateRoom = async (
   }
 };
 
-export { getRoomdetail, createRoom, updateRoom };
+const deleteRoom = async (room_id: number) => {
+  const resp = await axios.delete(import.meta.env.VITE_ROOM_EPT, {
+    data: { id: room_id },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Token ${localStorage.getItem("cookie")}`,
+    },
+  });
+  return resp.status;
+};
+
+export { getRoomdetail, createRoom, updateRoom, deleteRoom };

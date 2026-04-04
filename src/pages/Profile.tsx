@@ -16,6 +16,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { getProfile, updateProfile } from "@/backend/profile.ts";
+import { deleteRoom } from "@/backend/room.ts";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setProfile } from "@/store/authSlice";
@@ -122,6 +123,16 @@ export default function UserProfile() {
       if (params.name) getProfileData(params.name);
     } catch (e: any) {
       setErrors((prev) => [...prev, e.message]);
+    }
+  };
+
+  const handleDeleteRoom = async (roomId: number) => {
+    if (!confirm("Are you sure you want to delete this room?")) return;
+    try {
+      await deleteRoom(roomId);
+      if (params.name) getProfileData(params.name);
+    } catch (e: any) {
+      setErrors((prev) => [...prev, e?.response?.data?.error || "Failed to delete room"]);
     }
   };
 
@@ -526,6 +537,13 @@ export default function UserProfile() {
                         className="px-2 bg-gray-50 text-gray-600 py-1 rounded text-[10px] font-medium hover:bg-gray-100 transition-colors"
                       >
                         Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteRoom(room.id)}
+                        className="px-2 bg-red-50 text-red-600 py-1 rounded text-[10px] font-medium hover:bg-red-100 transition-colors"
+                        title="Delete Room"
+                      >
+                        <Trash2 size={12} />
                       </button>
                     </div>
                   </div>

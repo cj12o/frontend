@@ -96,6 +96,26 @@ export function AppSidebar() {
           <SidebarGroupLabel className="font-bold text-2xl underline">Topics</SidebarGroupLabel>
           <SidebarGroupContent className="pt-3">
             <SidebarMenu className="gap-2">
+
+              <div className="flex justify-between  items-center w-full  hover:shadow-b-lg">
+                <div className="flex items-center justify-center ">
+                  <Hash className="size-4  rounded-full bg-amber-200 m-2" />
+                  <span
+                    className={
+                      selectedTopic === "all"
+                        ? " pr-1 right-0"
+                        : "pr-1"
+                    }
+                  >
+                    {"All Topics"}
+                  </span>
+                </div>
+
+                <span className="p-1 rounded-full shadow-2xl text-md">
+                  {topics.length}
+                </span>
+              </div>
+
               {topics.map((topic) => (
                 <SidebarMenuItem key={topic.id} 
                 onClick={() => {
