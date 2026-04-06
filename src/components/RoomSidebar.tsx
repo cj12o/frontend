@@ -3,11 +3,16 @@ import {
   MessageSquare,
   ChevronLeft,
   ChevronRight,
+  Hash,
+  Zap,
+  Loader2,
 } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { Room} from "@/types/Room_meta.types";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { boostRoom } from "@/backend/room";
 
 interface RoomSidebarProps {
   roomInfo: Room;
@@ -24,18 +29,38 @@ export default function RoomSidebar({
   chatbotTab,
   setChatbotTab,
 }: RoomSidebarProps) {
+  const [boosting, setBoosting] = useState(false);
+  const [boostMsg, setBoostMsg] = useState("");
+
+  const handleBoost = async () => {
+    setBoosting(true);
+    setBoostMsg("");
+    try {
+      const res = await boostRoom(Number(roomInfo.id));
+      setBoostMsg(`Boosted! (${res.tool_called})`);
+    } catch (e: any) {
+      setBoostMsg(
+        e.message === "rate_limited"
+          ? "Rate limited. Try later."
+          : "Boost failed."
+      );
+    } finally {
+      setBoosting(false);
+      setTimeout(() => setBoostMsg(""), 4000);
+    }
+  };
+
   return (
     <aside
-      className={`flex flex-col bg-white/95 backdrop-blur-xl border-r border-gray-200/40 shadow-sm transition-all duration-300 ease-out ${
+      className={`flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ease-out ${
         sidebarOpen ? "w-72" : "w-16"
       } overflow-hidden flex-shrink-0`}
     >
       {/* Room Info Header */}
-      <div className="bg-gradient-to-br from-indigo-50/60 via-purple-50/40 to-white/80 border-b border-gray-200/30 px-4 py-3 flex-shrink-0">
+      <div className="border-b border-gray-200 px-4 py-3 flex-shrink-0">
         {sidebarOpen ? (
           <div className="space-y-2.5 animate-in fade-in duration-200">
-            <h2 className="text-base font-bold text-gray-900 tracking-tight flex items-center gap-2">
-              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+            <h2 className="text-2xl font-bold text-gray-900 underline flex items-center gap-2">
               {roomInfo.name}
             </h2>
 
@@ -64,69 +89,43 @@ export default function RoomSidebar({
             </div> */}
 
             {/* Creator Badge */}
-            <div className="group flex items-center gap-2 text-xs bg-white/80 px-3 py-2 border border-indigo-200/50 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all duration-200">
-              <div className=" bg-indigo-50">
-                <Users className="w-3.5 h-3.5 text-indigo-600 " />
-              </div>
-              <div className="w-fit">
-                <div className="text-md text-black font-bold tracking-wide">
-                  {"Creator =>"}
-                </div>
-              </div>
-              <div className="flex-1">
-                <Link
-                  to={`/profile/${roomInfo.author.name}`}
-                  className="text-[14px] font-medium text-blue-600 transition-colors truncate block"
-                >
-                  {roomInfo.author.name}
-                </Link>
-              </div>
+            <div className="flex items-center gap-2 text-xs px-3 py-2 border border-b-gray-800 border-t-white border-r-gray-200 hover:border-2 hover:border-gray-800 transition-all duration-200">
+              <Users className="size-4 rounded-full bg-amber-200 m-1" />
+              <span className="text-md text-black font-semibold">Creator</span>
+              <Link
+                to={`/profile/${roomInfo.author.name}`}
+                className="text-sm font-medium text-blue-600 transition-colors truncate"
+              >
+                {roomInfo.author.name}
+              </Link>
             </div>
 
             {/* Moderation Type Badge */}
-            <div
-              className={`flex items-center gap-2 text-xs  px-3 py-2 border shadow-sm transition-all duration-200 ${
-                roomInfo.moderation_type === 0
-                  ? "bg-blue-50/80 border-blue-200/60"
-                  : roomInfo.moderation_type === -1
-                    ? "bg-purple-50/80 border-purple-200/60"
-                    : "bg-green-10/80 border-green-200/60"
-              }`}
-            >
-              <div
-                className={`p-1 rounded-md ${
+            <div className="flex items-center gap-2 text-xs px-3 py-2 border border-b-gray-800 border-t-white border-r-gray-200 hover:border-2 hover:border-gray-800 transition-all duration-200">
+              <Hash className="size-4 rounded-full bg-amber-200 m-1" />
+              <span className="text-md text-black font-semibold uppercase tracking-wide">
+                Moderation
+              </span>
+              <span
+                className={`font-medium ${
                   roomInfo.moderation_type === 0
-                    ? "bg-blue-100"
+                    ? "text-blue-700"
                     : roomInfo.moderation_type === -1
-                      ? "bg-purple-100"
-                      : "bg-green-100"
+                      ? "text-purple-700"
+                      : "text-green-700"
                 }`}
-              />
-              <div className="flex gap-5">
-                <div className="text-md text-black font-semibold uppercase tracking-wide">
-                  Moderation
-                </div>
-                <div
-                  className={`font-medium ${
-                    roomInfo.moderation_type === 0
-                      ? "text-blue-700"
-                      : roomInfo.moderation_type === -1
-                        ? "text-purple-700"
-                        : "text-green-700"
-                  }`}
-                >
-                  {roomInfo.moderation_type === 0
-                    ? "Manual"
-                    : roomInfo.moderation_type === -1
-                      ? "Semi-Auto"
-                      : "Automatic"}
-                </div>
-              </div>
+              >
+                {roomInfo.moderation_type === 0
+                  ? "Manual"
+                  : roomInfo.moderation_type === -1
+                    ? "Semi-Auto"
+                    : "Automatic"}
+              </span>
             </div>
           </div>
         ) : (
           <div className="flex justify-center">
-            <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+            <Hash className="size-4 rounded-full bg-amber-200" />
           </div>
         )}
       </div>
@@ -135,9 +134,9 @@ export default function RoomSidebar({
       <ScrollArea className="flex-wrap ">
         <div className="p-3">
           <div className="flex items-center gap-2 mb-3 px-1">
-            <Users className="w-4 h-4 text-indigo-600" />
+            <Users className="size-4" />
             {sidebarOpen && (
-              <span className="text-xs font-semibold text-gray-700">
+              <span className="text-xs font-bold text-gray-900">
                 Members ({roomInfo.members.length})
               </span>
             )}
@@ -147,13 +146,13 @@ export default function RoomSidebar({
             {roomInfo.members.map((member) => (
               <Link to={`/profile/${member.member_name}`} key={member.member_id}>
                 <div
-                  className={` w-fit group flex items-center gap-2.5 p-2 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 rounded-lg transition-all duration-200 cursor-pointer border border-transparent hover:border-indigo-100 hover:shadow-sm ${
+                  className={`w-fit group flex items-center gap-2.5 p-2 rounded-lg transition-all duration-200 cursor-pointer border border-b-gray-800 border-t-white border-r-gray-200 hover:border-2 hover:border-gray-800 ${
                     !sidebarOpen ? "justify-center" : ""
                   }`}
                 >
                   <div className="relative flex-shrink-0">
                     {member.profile_image ? (
-                      <div className="w-8 h-8 rounded-full overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-200 border border-white">
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200">
                         <img
                           src={member.profile_image}
                           alt={member.member_name}
@@ -175,14 +174,14 @@ export default function RoomSidebar({
                         />
                       </div>
                     ) : (
-                      <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-sm group-hover:scale-105 transition-transform duration-200">
+                      <div className="w-8 h-8 bg-amber-200 text-gray-900 rounded-full flex items-center justify-center font-bold text-xs border border-gray-200">
                         {member.member_name.charAt(0).toUpperCase()}
                       </div>
                     )}
 
                     {/* Status Indicator */}
                     <div
-                      className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white shadow-sm ${
+                      className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white ${
                         member.status === true
                           ? "bg-emerald-400"
                           : member.status === false
@@ -191,7 +190,7 @@ export default function RoomSidebar({
                       }`}
                     >
                       {member.status === true && (
-                        <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-75" />
+                        <div className="absolute inset-0 bg-emerald-400 rounded-full" />
                       )}
                     </div>
                   </div>
@@ -235,20 +234,38 @@ export default function RoomSidebar({
       </ScrollArea>
 
       {/* Footer - Action Buttons */}
-      <div className="p-3 space-y-2 border-t border-gray-200/30 bg-white/40 flex-shrink-0">
+      <div className="p-3 space-y-2 border-t border-gray-200 flex-shrink-0">
         <Button
           onClick={() => setChatbotTab(!chatbotTab)}
           variant={chatbotTab ? "default" : "outline"}
           size="sm"
           className={`w-full gap-2 ${
             chatbotTab
-              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-indigo-500/30"
-              : ""
+              ? "border-2 border-gray-800"
+              : "border border-b-gray-800 border-t-white border-r-gray-200"
           } ${sidebarOpen ? "justify-start" : "justify-center px-0"}`}
         >
           <MessageSquare className="w-4 h-4 flex-shrink-0" />
           {sidebarOpen && "AI Assistant"}
         </Button>
+
+        <Button
+          onClick={handleBoost}
+          disabled={boosting}
+          variant="outline"
+          size="sm"
+          className={`w-full gap-2 border border-b-gray-800 border-t-white border-r-gray-200 ${sidebarOpen ? "justify-start" : "justify-center px-0"}`}
+        >
+          {boosting ? (
+            <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
+          ) : (
+            <Zap className="w-4 h-4 flex-shrink-0" />
+          )}
+          {sidebarOpen && (boosting ? "Boosting..." : "Boost Room")}
+        </Button>
+        {boostMsg && sidebarOpen && (
+          <p className="text-xs text-center text-gray-500">{boostMsg}</p>
+        )}
 
         <Button
           onClick={() => setSidebarOpen(!sidebarOpen)}

@@ -18,18 +18,16 @@ function Header() {
   const lastScrollRef = useRef(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Redux Selectors (Typed safely)
   const authStatus = useSelector((state: any) => state.authStatus);
   const name = useSelector((state: any) => state.name) || "guest";
   const profile_pic = useSelector((state: any) => state.profile_pic);
 
   // WebSocket Configuration
-  const socketUrl = `ws://127.0.0.1:8000/ws/notify/?token=${
-    localStorage.getItem("cookie") || ""
-  }`;
+  const websocketUrlbase=import.meta.env.VITE_WEBSOCKET_URL || `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/`
+  const socketUrl = websocketUrlbase+`notify/?token=${localStorage.getItem("cookie") || ""}`
   const { lastJsonMessage } = useWebSocket(socketUrl, {
-    shouldReconnect: () => true,
-    onError: () => {}, // Suppress errors for demo
+    shouldReconnect: () => authStatus?true:false,
+    onError: () => {},  
   });
 
   useEffect(() => {

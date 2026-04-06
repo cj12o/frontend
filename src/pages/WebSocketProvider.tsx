@@ -4,6 +4,8 @@ import useWebSocket from "react-use-websocket";
 
 const WebSocketContext = createContext<any>(null);
 
+const websocketUrlbase=import.meta.env.VITE_WEBSOCKET_URL || `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/`
+
 const WebSocketContextProvider = ({
   id,
   children,
@@ -12,7 +14,7 @@ const WebSocketContextProvider = ({
   children: React.ReactNode;
 }) => {
   const url = useMemo(() => {
-    return `ws://127.0.0.1:8000/ws/chat/${id}/?token=${localStorage.getItem("cookie") || ""}`;
+    return websocketUrlbase+`chat/${id}/?token=${localStorage.getItem("cookie") || ""}`;
   }, [id]);
 
   const { sendMessage, lastJsonMessage } = useWebSocket(url, {

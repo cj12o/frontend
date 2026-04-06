@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { getPolls, getVoteData } from "../backend/polls.ts";
+import { getPolls, getVoteData, castPollVote } from "../backend/polls.ts";
 import { Link } from "react-router-dom";
 
 import { WebSocketContext } from "../pages/WebSocketProvider";
@@ -16,12 +16,16 @@ const Poll = ({ id, room_id }: { id: number; room_id: number }) => {
     username: string;
     profile_pic?: string;
   };
-
+  type choice_type = {
+    choices:string[]
+  }
   type Poll = {
     id: number;
-    author: Author | string;
+    author: Author | string | null;
     question: string;
-    choices: string[];
+    message:number
+    created_at: string;
+    choices:choice_type;
     room: number;
   };
 
@@ -31,7 +35,6 @@ const Poll = ({ id, room_id }: { id: number; room_id: number }) => {
 
   const getpollsData = async (id: number) => {
     const data = await getPolls(id);
-    console.log(`POLL data:${data.question}`);
     setPolls(data);
   };
 
@@ -60,13 +63,13 @@ const Poll = ({ id, room_id }: { id: number; room_id: number }) => {
 
   // Helper to get author username
   const getAuthorUsername = () => {
-    if (!poll) return "";
+    if (!poll || !poll.author) return "";
     return typeof poll.author === "string" ? poll.author : poll.author.username;
   };
 
   // Helper to get author profile pic
   const getAuthorProfilePic = () => {
-    if (!poll || typeof poll.author === "string") return null;
+    if (!poll || !poll.author || typeof poll.author === "string") return null;
     return poll.author.profile_pic;
   };
 
@@ -89,6 +92,38 @@ const Poll = ({ id, room_id }: { id: number; room_id: number }) => {
   const isUserChoice = (choiceIndex: number): boolean => {
     if (!voteData) return false;
     return voteData.user_has_vote && voteData.user_vote === choiceIndex;
+  };
+
+  const handleVote = async (choiceIndex: number) => {
+    if (!poll) return;
+    const prevVoteData = voteData;
+    const prevTotal = totalVotes;
+
+    // Optimistic update
+    setVoteData((prev) => {
+      const next: VoteData = prev
+        ? { ...prev }
+        : ({ user_has_vote: false, user_vote: -1 } as VoteData);
+      // Remove old vote count
+      if (next.user_has_vote && next.user_vote !== choiceIndex) {
+        const old = next[next.user_vote.toString()];
+        next[next.user_vote.toString()] = typeof old === "number" ? Math.max(0, old - 1) : 0;
+      }
+      // Add new vote count
+      const cur = next[choiceIndex.toString()];
+      next[choiceIndex.toString()] = typeof cur === "number" ? cur + 1 : 1;
+      next.user_has_vote = true;
+      next.user_vote = choiceIndex;
+      return next;
+    });
+    setTotalVotes((prev) => (prevVoteData?.user_has_vote ? prev : prev + 1));
+
+    const ok = await castPollVote(poll.id, choiceIndex);
+    if (!ok) {
+      // Revert on failure
+      setVoteData(prevVoteData);
+      setTotalVotes(prevTotal);
+    }
   };
 
   return (
@@ -162,8 +197,7 @@ const Poll = ({ id, room_id }: { id: number; room_id: number }) => {
 
           {/* Poll Choices */}
           <div className="space-y-1.5">
-            {poll.choices
-              ? poll.choices.map((choice, index) => {
+            {poll.choices &&  poll.choices.choices.map((choice, index) => {
                   const percentage = getPercentage(index);
                   const voteCount = getVoteCount(index);
                   const isSelected = isUserChoice(index);
@@ -194,10 +228,11 @@ const Poll = ({ id, room_id }: { id: number; room_id: number }) => {
                             type="radio"
                             name={`poll-${poll.id}`}
                             checked={isSelected}
+                            onChange={() => handleVote(index)}
                             className={`w-3 h-3 focus:ring-indigo-500 ${
                               isSelected ? "text-indigo-600" : "text-gray-400"
                             }`}
-                            readOnly
+
                           />
                           <span
                             className={`ml-2 text-xs font-medium ${
@@ -224,8 +259,7 @@ const Poll = ({ id, room_id }: { id: number; room_id: number }) => {
                       </label>
                     </div>
                   );
-                })
-              : null}
+                })}
           </div>
         </div>
       ) : null}

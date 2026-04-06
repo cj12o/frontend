@@ -106,4 +106,26 @@ const deleteRoom = async (room_id: number) => {
   return resp.status;
 };
 
-export { getRoomdetail, createRoom, updateRoom, deleteRoom };
+const boostRoom = async (room_id: number) => {
+  try {
+    const resp = await axios.post(
+      import.meta.env.VITE_BASE_EPT + `rooms/${room_id}/boost/`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${localStorage.getItem("cookie")}`,
+        },
+      },
+    );
+    return resp.data;
+  } catch (e: any) {
+    if (e?.response?.status === 429) {
+      throw new Error("rate_limited");
+    }
+    console.error(e);
+    throw e;
+  }
+};
+
+export { getRoomdetail, createRoom, updateRoom, deleteRoom, boostRoom };

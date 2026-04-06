@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useRef,lazy} from "react";
+import { createContext, useState, useEffect, useRef} from "react";
 import Chatbot_reply from "../components/Chatbot_reply";
 import { User } from "lucide-react";
 import agent_logo from "../assets/agent_logo.jpg";

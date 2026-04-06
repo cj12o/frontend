@@ -229,7 +229,7 @@ export default function UserProfile() {
                 <div className="h-full w-full rounded-full overflow-hidden relative">
                   {user.profile_pic ? (
                     <img
-                      src={user.profile_pic}
+                      src={user.profile_pic }
                       className="w-full h-full object-cover"
                       alt="Profile"
                     />
